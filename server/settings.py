@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'accountsapp',
     'clinicapp',
     'reviewsapp',
+    'doctors',
+    'schedules',
 
 ]
 
