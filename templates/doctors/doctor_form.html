@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if doctor %}Редактирование: {{ doctor }}{% else %}Добавление врача{% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% if doctor %}Редактирование профиля врача{% else %}Добавление нового врача{% endif %}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+        <a href="/doctors/">Отмена</a>
+    </form>
+{% endblock %}
