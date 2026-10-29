@@ -71,17 +71,22 @@
 
                 <!-- Навигационные ссылки (Десктоп) -->
                 <nav class="hidden md:flex items-center space-x-1">
-                    <a href="{% url 'appointments:my_appointments' %}" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-regular fa-calendar-check text-teal-400"></i>
-                        <span>Мои приёмы</span>
-                    </a>
-                    
-                    <a href="{% url 'appointments:appointment_book' 1 %}" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-solid fa-plus-circle text-emerald-400"></i>
-                        <span>Записаться</span>
+                    <a href="/doctors/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-user-doctor text-teal-400"></i>
+                        <span>Врачи</span>
                     </a>
 
-                    <a href="{% url 'notifications:notification_list' %}" class="relative px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                    <a href="/doctors/specializations/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-stethoscope text-sky-400"></i>
+                        <span>Специализации</span>
+                    </a>
+
+                    <a href="{% url 'appointments:my_appointments' %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-regular fa-calendar-check text-emerald-400"></i>
+                        <span>Мои приёмы</span>
+                    </a>
+
+                    <a href="{% url 'notifications:notification_list' %}" class="relative px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
                         <i class="fa-regular fa-bell text-amber-400"></i>
                         <span>Уведомления</span>
                     </a>
@@ -120,11 +125,14 @@
 
         <!-- Мобильное выпадающее меню -->
         <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
-            <a href="{% url 'appointments:my_appointments' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-regular fa-calendar-check text-teal-400 mr-2"></i> Мои приёмы
+            <a href="/doctors/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-solid fa-user-doctor text-teal-400 mr-2"></i> Врачи
             </a>
-            <a href="{% url 'appointments:appointment_book' 1 %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-solid fa-plus-circle text-emerald-400 mr-2"></i> Записаться на приём
+            <a href="/doctors/specializations/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-solid fa-stethoscope text-sky-400 mr-2"></i> Специализации
+            </a>
+            <a href="{% url 'appointments:my_appointments' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-regular fa-calendar-check text-emerald-400 mr-2"></i> Мои приёмы
             </a>
             <a href="{% url 'notifications:notification_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
                 <i class="fa-regular fa-bell text-amber-400 mr-2"></i> Уведомления

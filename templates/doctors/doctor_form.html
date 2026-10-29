@@ -1,16 +1,132 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    {% if doctor %}Редактирование: {{ doctor }}{% else %}Добавление врача{% endif %}
-{% endblock %}
+{% block title %}{% if doctor %}Редактировать врача{% else %}Добавить врача{% endif %} — MedClinic{% endblock %}
 
 {% block content %}
-    <h1>{% if doctor %}Редактирование профиля врача{% else %}Добавление нового врача{% endif %}</h1>
+<div class="max-w-2xl mx-auto space-y-6">
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Сохранить</button>
-        <a href="/doctors/">Отмена</a>
-    </form>
+    <!-- Навигация назад -->
+    <div>
+        <a href="{% if doctor %}{% url 'doctor_detail' doctor.pk %}{% else %}/doctors/{% endif %}" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-teal-400"></i> Назад
+        </a>
+    </div>
+
+    <!-- Карточка формы -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+        
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-user-doctor text-teal-400"></i>
+                <span>{% if doctor %}Редактирование профиля врача{% else %}Добавление нового врача{% endif %}</span>
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">
+                Заполните персональные и профессиональные данные специалиста клиники
+            </p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+
+            {% if not doctor %}
+                <div class="p-4 rounded-xl bg-slate-800/40 border border-slate-800 space-y-3">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Данные для входа в систему</div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Имя пользователя (Логин) *</label>
+                            <input type="text" name="username" required 
+                                   class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Пароль *</label>
+                            <input type="password" name="password" required 
+                                   class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Имя *</label>
+                    <input type="text" name="first_name" value="{{ doctor.user.first_name }}" required 
+                           class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Фамилия *</label>
+                    <input type="text" name="last_name" value="{{ doctor.user.last_name }}" required 
+                           class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Специализация *</label>
+                    <select name="specialization" required 
+                            class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                        {% for s in specializations %}
+                            <option value="{{ s.id }}" {% if doctor.specialization_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Стаж (лет)</label>
+                    <input type="number" name="experience_years" value="{{ doctor.experience_years|default:0 }}" min="0" 
+                           class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Номер телефона</label>
+                    <input type="text" name="phone" value="{{ doctor.phone }}" placeholder="+992..." 
+                           class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Фотография врача</label>
+                    <input type="file" name="photo" accept="image/*" 
+                           class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-teal-500/20 file:text-teal-300 hover:file:bg-teal-500/30">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Оказываемые услуги (выберите несколько)</label>
+                <select name="services" multiple size="4" 
+                        class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">
+                    {% for serv in services %}
+                        <option value="{{ serv.id }}" {% if serv in doctor.services.all %}selected{% endif %}>
+                            {{ serv.name }} ({{ serv.price }} ₽)
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Биография / Описание врача</label>
+                <textarea name="bio" rows="3" placeholder="Образование, опыт, сертификаты..." 
+                          class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500">{{ doctor.bio }}</textarea>
+            </div>
+
+            <div class="pt-2">
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="is_active" {% if doctor.is_active or not doctor %}checked{% endif %} 
+                           class="w-4 h-4 rounded text-teal-500 bg-slate-800 border-slate-700 focus:ring-teal-500">
+                    <span class="text-xs font-medium text-slate-300">Врач ведёт приём (активен в каталоге)</span>
+                </label>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <a href="{% if doctor %}{% url 'doctor_detail' doctor.pk %}{% else %}/doctors/{% endif %}" class="px-4 py-2 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                    Отмена
+                </a>
+                <button type="submit" class="px-6 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+                    {% if doctor %}Сохранить изменения{% else %}Создать врача{% endif %}
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
 {% endblock %}
