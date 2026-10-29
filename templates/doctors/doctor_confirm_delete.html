@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Деактивация врача: {{ doctor.user.get_full_name|default:doctor.user.username }} - MedBook{% endblock %}
+
+{% block content %}
+<div style="max-width: 550px; margin: 40px auto; background: white; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); padding: 30px; text-align: center; border: 1px solid #fee2e2;">
+    <div style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+    
+    <h2 style="margin: 0 0 10px 0; color: #991b1b; font-size: 22px;">Деактивировать врача?</h2>
+    
+    <p style="color: #64748b; font-size: 15px; line-height: 1.5; margin-bottom: 25px;">
+        Вы уверены, что хотите деактивировать аккаунт врача 
+        <strong style="color: #1e293b;">
+            {% if doctor.user.first_name or doctor.user.last_name %}
+                {{ doctor.user.first_name }} {{ doctor.user.last_name }}
+            {% else %}
+                {{ doctor.user.username }}
+            {% endif %}
+        </strong>?
+        <br><br>
+        <span style="font-size: 13px; color: #ef4444; background: #fef2f2; padding: 6px 12px; border-radius: 6px; display: inline-block;">
+            Врач перестанет отображаться для пациентов в каталоге, но его история приемов и расписание сохранятся.
+        </span>
+    </p>
+
+    <form method="post" style="display: flex; justify-content: center; gap: 12px;">
+        {% csrf_token %}
+        <a href="{% url 'doctor_detail' doctor.pk %}" 
+           style="background: #f1f5f9; color: #475569; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-weight: 500; font-size: 14px; border: 1px solid #e2e8f0; display: inline-flex; align-items: center;">
+            Отмена
+        </a>
+        <button type="submit" 
+                style="background: #ef4444; color: white; border: none; padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center;">
+            Да, деактивировать
+        </button>
+    </form>
+</div>
+{% endblock %}

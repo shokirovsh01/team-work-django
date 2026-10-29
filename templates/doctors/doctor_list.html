@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Каталог врачей — MedBook{% endblock %}
+
+{% block content %}
+<div style="max-width: 860px; margin: 0 auto;">
+
+    <!-- Заголовок -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+            <h1 style="margin: 0; font-size: 26px; color: #1e293b;">Врачи клиники</h1>
+            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Выберите врача для консультации и записи на приём</p>
+        </div>
+        {% if user.is_staff %}
+            <a href="/doctors/create/" class="btn" style="padding: 9px 18px;">+ Добавить врача</a>
+        {% endif %}
+    </div>
+
+    <!-- Поиск и фильтр -->
+    <form method="GET" style="background: #fff; padding: 14px 18px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <input type="text" name="q" value="{{ q }}" placeholder="Поиск врача по имени или специальности..." style="flex: 2; min-width: 220px; margin-top: 0;">
+        <select name="specialization" style="flex: 1; min-width: 180px; margin-top: 0;">
+            <option value="">Все специализации</option>
+            {% for s in specializations %}
+                <option value="{{ s.id }}" {% if selected_specialization == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" style="margin-top: 0;">Найти</button>
+        {% if q or selected_specialization %}
+            <a href="/doctors/" class="btn btn-outline" style="margin-top: 0;">Сбросить</a>
+        {% endif %}
+    </form>
+
+    <!-- Список врачей -->
+    {% if doctors %}
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            {% for doctor in doctors %}
+                <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.04);">
+                    
+                    <!-- Фотография врача -->
+                    <div style="width: 140px; height: 165px; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                        {% if doctor.photo %}
+                            <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center;">
+                        {% else %}
+                            <div style="font-size: 50px; color: #94a3b8;">👨‍⚕️</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Информация о докторе -->
+                    <div style="flex: 1; min-width: 280px;">
+                        
+                        <!-- Специализация и активность -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="background: #e0f2fe; color: #0284c7; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 6px;">
+                                {{ doctor.specialization.name|default:"Терапевт" }}
+                            </span>
+                            {% if not doctor.is_active %}
+                                <span style="background: #fee2e2; color: #dc2626; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
+                                    Не ведёт приём
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- ФИО врача -->
+                        <h2 style="margin: 0 0 6px 0; font-size: 20px; color: #0f172a;">
+                            {{ doctor.user.get_full_name|default:doctor.user.username }}
+                        </h2>
+
+                        <!-- Стаж и контакты -->
+                        <div style="font-size: 14px; color: #475569; margin-bottom: 8px;">
+                            <span>Стаж: <strong>{{ doctor.experience_years }} лет</strong></span>
+                            {% if doctor.phone %}
+                                <span style="margin-left: 15px;">Телефон: <strong>{{ doctor.phone }}</strong></span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Краткая биография -->
+                        {% if doctor.bio %}
+                            <p style="margin: 0 0 10px 0; font-size: 13px; color: #64748b; line-height: 1.4;">
+                                {{ doctor.bio|truncatewords:16 }}
+                            </p>
+                        {% endif %}
+
+                        <!-- Топ 2-3 услуги врача -->
+                        {% if doctor.services.all %}
+                            <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px;">
+                                {% for s in doctor.services.all|slice:":3" %}
+                                    <span style="background: #f1f5f9; color: #334155; font-size: 12px; padding: 3px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                                        {{ s.name }} &bull; <strong>{{ s.price }} ₽</strong>
+                                    </span>
+                                {% endfor %}
+                                {% if doctor.services.all|length > 3 %}
+                                    <span style="color: #64748b; font-size: 12px;">+ ещё {{ doctor.services.all|length|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Кнопки действий -->
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <a href="/doctors/{{ doctor.pk }}/" class="btn" style="padding: 7px 16px; font-size: 13px;">
+                                Подробнее о враче
+                            </a>
+                            <a href="/schedules/doctor/{{ doctor.pk }}/" class="btn btn-outline" style="padding: 7px 16px; font-size: 13px;">
+                                Расписание
+                            </a>
+                            {% if user.is_staff or user.doctor_profile == doctor %}
+                                <a href="/doctors/{{ doctor.pk }}/edit/" class="btn btn-outline" style="padding: 7px 12px; font-size: 13px;" title="Редактировать профиль">
+                                    ✏️
+                                </a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="background: #fff; padding: 40px; text-align: center; border-radius: 10px; border: 1px solid #e2e8f0; color: #64748b;">
+            <p style="font-size: 18px; margin: 0 0 8px 0;">Врачи не найдены</p>
+            <p style="font-size: 14px; margin: 0;">Попробуйте сбросить фильтры или ввести другое имя.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

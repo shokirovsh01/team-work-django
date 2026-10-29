@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}График и слоты — {{ doctor.user.get_full_name|default:doctor.user.username }} - MedBook{% endblock %}
+
+{% block content %}
+<div style="max-width: 1050px; margin: 0 auto;">
+
+    <!-- Шапка и навигация -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <a href="{% url 'doctor_detail' doctor.pk %}" class="btn btn-outline" style="font-size: 13px; margin-bottom: 8px; display: inline-block;">&larr; Назад к профилю врача</a>
+            <h1 style="margin: 0; font-size: 24px; color: #1e293b;">
+                📅 График работы и слоты: 
+                <span style="color: #0284c7;">
+                    {% if doctor.user.first_name or doctor.user.last_name %}
+                        {{ doctor.user.first_name }} {{ doctor.user.last_name }}
+                    {% else %}
+                        {{ doctor.user.username }}
+                    {% endif %}
+                </span>
+            </h1>
+        </div>
+        {% if can_manage %}
+            <div style="display: flex; gap: 8px;">
+                <a href="{% url 'days_off' doctor.pk %}" class="btn btn-outline" style="font-size: 13px;">🌴 Выходные и отпуска</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 1. Рабочий график по дням недели -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+                <h3 style="margin: 0 0 4px 0; font-size: 18px; color: #1e293b;">⏰ Еженедельный график работы</h3>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Регулярные рабочие часы для каждого дня недели</p>
+            </div>
+        </div>
+
+        {% if schedules %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                {% for s in schedules %}
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; background: #f8fafc; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; color: #0284c7; font-size: 15px; margin-bottom: 4px;">
+                                {{ s.get_weekday_display }}
+                            </div>
+                            <div style="font-size: 14px; color: #334155; font-weight: 500;">
+                                🕒 {{ s.start_time|time:"H:i" }} — {{ s.end_time|time:"H:i" }}
+                            </div>
+                            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                                Длительность слота: <strong>{{ s.slot_duration }} мин</strong>
+                            </div>
+                        </div>
+
+                        {% if can_manage %}
+                            <form method="post" style="margin-top: 10px; text-align: right;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_schedule">
+                                <input type="hidden" name="weekday" value="{{ s.weekday }}">
+                                <button type="submit" onclick="return confirm('Удалить {{ s.get_weekday_display }} из регулярного графика?')" 
+                                        style="background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline;">
+                                    Удалить день
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="padding: 24px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 8px; font-size: 14px;">
+                Регулярный график ещё не настроен. Добавьте рабочие дни ниже.
+            </div>
+        {% endif %}
+
+        <!-- Форма добавления/изменения графика (без forms.py) -->
+        {% if can_manage %}
+            <div style="background: #f1f5f9; border-radius: 8px; padding: 16px; margin-top: 16px;">
+                <div style="font-weight: 600; font-size: 14px; color: #334155; margin-bottom: 12px;">
+                    ➕ Настроить / изменить рабочий день:
+                </div>
+                <form method="post" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save_schedule">
+
+                    <div style="min-width: 140px; flex: 1;">
+                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">День недели:</label>
+                        <select name="weekday" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: white;">
+                            {% for num, name, is_configured in weekday_choices %}
+                                <option value="{{ num }}">
+                                    {{ name }} {% if is_configured %}(настроен){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="width: 110px;">
+                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">Начало:</label>
+                        <input type="time" name="start_time" value="09:00" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="width: 110px;">
+                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">Конец:</label>
+                        <input type="time" name="end_time" value="17:00" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="width: 120px;">
+                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">Слот (мин):</label>
+                        <select name="slot_duration" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: white;">
+                            <option value="15">15 минут</option>
+                            <option value="20">20 минут</option>
+                            <option value="30" selected>30 минут</option>
+                            <option value="45">45 минут</option>
+                            <option value="60">60 минут</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn" style="padding: 9px 18px; font-size: 13px;">Сохранить день</button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 2. Список активных слотов -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+                <h3 style="margin: 0 0 4px 0; font-size: 18px; color: #1e293b;">
+                    🕒 Временные слоты записи (всего: {{ slots.count }})
+                </h3>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">
+                    Свободные и забронированные слоты на будущие даты
+                </p>
+            </div>
+            {% if can_manage %}
+                <a href="/schedules/doctor/{{ doctor.id }}/slots/create/" class="btn" style="font-size: 13px;">+ Создать слот</a>
+            {% endif %}
+        </div>
+
+        {% if slots %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px;">
+                {% for slot in slots %}
+                    <div style="border: 1px solid {% if slot.status == 'free' %}#bbf7d0{% else %}#fed7aa{% endif %}; border-radius: 8px; padding: 10px; background: {% if slot.status == 'free' %}#f0fdf4{% else %}#fff7ed{% endif %}; position: relative;">
+                        <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 2px;">
+                            {{ slot.date|date:"d.m.Y (D)" }}
+                        </div>
+                        <div style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                            {{ slot.start_time|time:"H:i" }} — {{ slot.end_time|time:"H:i" }}
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            {% if slot.status == 'free' %}
+                                <span style="font-size: 11px; font-weight: 600; color: #15803d; background: #dcfce7; padding: 2px 6px; border-radius: 4px;">Свободен</span>
+                            {% else %}
+                                <span style="font-size: 11px; font-weight: 600; color: #c2410c; background: #ffedd5; padding: 2px 6px; border-radius: 4px;">Занят</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="padding: 24px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 8px; font-size: 14px;">
+                На ближайшие дни слотов ещё нет. Настройте график работы выше и нажмите «Сгенерировать слоты».
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

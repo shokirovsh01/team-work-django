@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Д-р {{ doctor.user.get_full_name|default:doctor.user.username }} — MedBook{% endblock %}
+
+{% block content %}
+<div style="max-width: 860px; margin: 0 auto;">
+
+    <!-- Навигация назад и действия -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <a href="/doctors/" class="btn btn-outline">&larr; Назад к каталогу</a>
+        {% if can_edit %}
+            <div style="display: flex; gap: 8px;">
+                <a href="/doctors/{{ doctor.pk }}/edit/" class="btn btn-outline">✏️ Редактировать профиль</a>
+                <a href="/schedules/doctor/{{ doctor.pk }}/" class="btn">📅 Управление расписанием</a>
+                {% if user.is_staff and doctor.is_active %}
+                    <a href="/doctors/{{ doctor.pk }}/delete/" class="btn" style="background: #ef4444; border-color: #ef4444; color: white;">Деактивировать</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Основная визитка врача -->
+    <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; margin-bottom: 24px;">
+        
+        <!-- Фото доктора -->
+        <div style="width: 170px; height: 210px; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+            {% if doctor.photo %}
+                <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center;">
+            {% else %}
+                <div style="font-size: 60px; color: #94a3b8;">👨‍⚕️</div>
+            {% endif %}
+        </div>
+
+        <!-- Данные врача -->
+        <div style="flex: 1; min-width: 280px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <span style="background: #e0f2fe; color: #0284c7; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 6px;">
+                    {{ doctor.specialization.name|default:"Общая практика" }}
+                </span>
+                {% if doctor.is_active %}
+                    <span style="background: #dcfce7; color: #15803d; font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+                        ● Ведёт приём
+                    </span>
+                {% else %}
+                    <span style="background: #fee2e2; color: #dc2626; font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+                        Приём приостановлен
+                    </span>
+                {% endif %}
+            </div>
+
+            <h1 style="margin: 6px 0 12px 0; font-size: 24px; color: #0f172a;">
+                {{ doctor.user.get_full_name|default:doctor.user.username }}
+            </h1>
+
+            <div style="font-size: 14px; color: #475569; display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;">
+                <div>🩺 Стаж работы: <strong style="color: #1e293b;">{{ doctor.experience_years }} лет</strong></div>
+                {% if doctor.phone %}
+                    <div>📞 Телефон для справок: <strong style="color: #1e293b;">{{ doctor.phone }}</strong></div>
+                {% endif %}
+                {% if doctor.user.email %}
+                    <div>✉️ Электронная почта: <strong style="color: #1e293b;">{{ doctor.user.email }}</strong></div>
+                {% endif %}
+            </div>
+
+            <a href="/schedules/doctor/{{ doctor.pk }}/" class="btn" style="padding: 9px 20px;">
+                Записаться на приём / Расписание
+            </a>
+        </div>
+    </div>
+
+    <!-- О враче -->
+    {% if doctor.bio %}
+        <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #1e293b;">О специалисте</h3>
+            <p style="margin: 0; color: #334155; font-size: 15px; line-height: 1.6; white-space: pre-line;">{{ doctor.bio }}</p>
+        </div>
+    {% endif %}
+
+    <!-- Оказываемые услуги -->
+    <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <h3 style="margin: 0 0 14px 0; font-size: 18px; color: #1e293b;">Оказываемые медицинские услуги</h3>
+        {% if doctor.services.all %}
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                {% for s in doctor.services.all %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f8fafc; border-radius: 6px; border: 1px solid #f1f5f9;">
+                        <div>
+                            <strong style="color: #1e293b; font-size: 14px;">{{ s.name }}</strong>
+                            <div style="color: #64748b; font-size: 12px;">Длительность: {{ s.duration }} минут</div>
+                        </div>
+                        <span style="font-weight: bold; color: #0284c7; font-size: 15px;">{{ s.price }} ₽</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #64748b; font-size: 14px; margin: 0;">Услуги для данного врача ещё не привязаны.</p>
+        {% endif %}
+    </div>
+
+    <!-- График и выходные -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 25px;">
+        
+        <!-- График работы -->
+        <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <h3 style="margin: 0 0 12px 0; font-size: 17px; color: #1e293b;">📅 Регулярный график работы</h3>
+            {% if schedules %}
+                <ul style="margin: 0; padding-left: 20px; color: #334155; font-size: 14px; line-height: 1.8;">
+                    {% for sch in schedules %}
+                        <li><strong>{{ sch.get_weekday_display }}:</strong> {{ sch.start_time|time:"H:i" }} &ndash; {{ sch.end_time|time:"H:i" }} (слоты по {{ sch.slot_duration }} мин)</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: #64748b; font-size: 14px; margin: 0;">Регулярный график ещё не заполнен.</p>
+            {% endif %}
+        </div>
+
+        <!-- Выходные дни -->
+        <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <h3 style="margin: 0 0 12px 0; font-size: 17px; color: #1e293b;">🏖️ Выходные и отпуска</h3>
+            {% if days_off %}
+                <ul style="margin: 0; padding-left: 20px; color: #dc2626; font-size: 14px; line-height: 1.8;">
+                    {% for do in days_off %}
+                        <li><strong>{{ do.date|date:"d.m.Y" }}</strong> {% if do.reason %}&mdash; <span style="color: #64748b;">{{ do.reason }}</span>{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: #64748b; font-size: 14px; margin: 0;">Запланированных отпусков нет.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

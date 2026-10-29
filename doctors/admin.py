@@ -20,4 +20,3 @@ class DoctorAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'specialization', 'experience_years', 'is_active')
     list_filter = ('specialization', 'is_active')
     search_fields = ('user__first_name', 'user__last_name')
-    filter_horizontal = ('services',)  
