@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, V
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from .models import Appointment,Doctor
+from schedules.models import TimeSlot
 from .forms import AppointmentBookForm
 
 class MyAppointmentsView(LoginRequiredMixin, ListView):
@@ -47,9 +48,18 @@ class AppointmentCancelView(LoginRequiredMixin, View):
 
     
 class AppointmentsAvailableView(LoginRequiredMixin,ListView):
-    model = Doctor
-    template_name = 'media2/doctor_appointments.html'
-    context_object_name = 'doctor'
+    model = TimeSlot
+    template_name = 'media2/available_slots.html'
+    context_object_name = 'slots'
 
-    # def get_queryset(self):
-    #     return Doctor.objects.filter()
+    def get_queryset(self):
+        return TimeSlot.objects.filter(
+            doctor_id=self.kwargs['doctor_id'],
+            status='free',
+            ).order_by('date','start_time')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['doctor'] = get_object_or_404(Doctor,pk=self.kwargs['doctor_id']) 
+        return context
+
