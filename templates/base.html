@@ -95,22 +95,33 @@
                 <!-- Правый блок: Профиль / Авторизация -->
                 <div class="hidden md:flex items-center space-x-4">
                     {% if user.is_authenticated %}
-                        <div class="flex items-center space-x-3 bg-slate-800/70 border border-slate-700/60 rounded-full py-1.5 px-4">
-                            <div class="w-7 h-7 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-300 font-semibold text-xs">
-                                {{ user.username|slice:":1"|upper }}
-                            </div>
-                            <span class="text-sm font-medium text-slate-200">{{ user.username }}</span>
+                        <div class="flex items-center space-x-2 bg-slate-800/70 border border-slate-700/60 rounded-full py-1.5 px-3">
+                            <a href="{% url 'profile' %}" class="flex items-center space-x-2 hover:opacity-80 transition">
+                                <div class="w-7 h-7 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-300 font-semibold text-xs">
+                                    {{ user.username|slice:":1"|upper }}
+                                </div>
+                                <span class="text-sm font-medium text-slate-200">{{ user.username }}</span>
+                            </a>
                             
                             {% if user.is_staff %}
                                 <a href="/admin/" class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full hover:bg-indigo-500/30 transition" title="Админ-панель">
                                     Admin
                                 </a>
                             {% endif %}
+                            
+                            <a href="{% url 'logout' %}" class="text-slate-400 hover:text-red-400 pl-1 text-sm" title="Выйти">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </a>
                         </div>
                     {% else %}
-                        <a href="/admin/login/?next=/appointments/my/" class="px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
-                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Войти
-                        </a>
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'login' %}" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+                                Войти
+                            </a>
+                            <a href="{% url 'register' %}" class="px-3.5 py-1.5 rounded-xl text-sm font-medium bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+                                Регистрация
+                            </a>
+                        </div>
                     {% endif %}
                 </div>
 
