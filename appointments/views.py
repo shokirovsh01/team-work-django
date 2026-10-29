@@ -38,5 +38,3 @@ class AppointmentCancelView(LoginRequiredMixin,View):
         return redirect('my_appointments')
 
     
-
-    
