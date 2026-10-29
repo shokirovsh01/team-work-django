@@ -74,8 +74,6 @@ def doctor_create(request):
                 'specializations': Specialization.objects.all(),
                 'services': Service.objects.all(),
             })
-
-
         user = User.objects.create_user(
             username=username,
             password=password,

@@ -1,65 +1,68 @@
 {% extends 'base.html' %}
 
-{% block title %}График и слоты — {{ doctor.user.get_full_name|default:doctor.user.username }} - MedBook{% endblock %}
+{% block title %}График и слоты — {{ doctor.user.get_full_name|default:doctor.user.username }} - MedClinic{% endblock %}
 
 {% block content %}
-<div style="max-width: 1050px; margin: 0 auto;">
+<div class="space-y-6 max-w-5xl mx-auto">
 
     <!-- Шапка и навигация -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
         <div>
-            <a href="{% url 'doctor_detail' doctor.pk %}" class="btn btn-outline" style="font-size: 13px; margin-bottom: 8px; display: inline-block;">&larr; Назад к профилю врача</a>
-            <h1 style="margin: 0; font-size: 24px; color: #1e293b;">
-                📅 График работы и слоты: 
-                <span style="color: #0284c7;">
-                    {% if doctor.user.first_name or doctor.user.last_name %}
-                        {{ doctor.user.first_name }} {{ doctor.user.last_name }}
-                    {% else %}
-                        {{ doctor.user.username }}
-                    {% endif %}
-                </span>
+            <a href="{% url 'doctor_detail' doctor.pk %}" class="inline-flex items-center text-xs font-medium text-slate-400 hover:text-white transition mb-2">
+                <i class="fa-solid fa-arrow-left mr-1.5 text-teal-400"></i> Назад к профилю врача
+            </a>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
+                <i class="fa-regular fa-calendar-days text-teal-400"></i>
+                <span>График и слоты: <span class="text-teal-300">{{ doctor.user.get_full_name|default:doctor.user.username }}</span></span>
             </h1>
         </div>
+
         {% if can_manage %}
-            <div style="display: flex; gap: 8px;">
-                <a href="{% url 'days_off' doctor.pk %}" class="btn btn-outline" style="font-size: 13px;">🌴 Выходные и отпуска</a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'days_off' doctor.pk %}" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-umbrella-beach text-amber-400"></i> Выходные и отпуска
+                </a>
+                <a href="{% url 'slot_create' doctor.pk %}" class="px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Создать слот
+                </a>
             </div>
         {% endif %}
     </div>
 
-    <!-- 1. Рабочий график по дням недели -->
-    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div>
-                <h3 style="margin: 0 0 4px 0; font-size: 18px; color: #1e293b;">⏰ Еженедельный график работы</h3>
-                <p style="margin: 0; color: #64748b; font-size: 13px;">Регулярные рабочие часы для каждого дня недели</p>
-            </div>
+    <!-- 1. Регулярный рабочий график по дням недели -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
+        <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-regular fa-clock text-sky-400"></i>
+                <span>Еженедельный график работы</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">Регулярные приёмные часы врача по дням недели</p>
         </div>
 
         {% if schedules %}
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {% for s in schedules %}
-                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; background: #f8fafc; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-4 flex flex-col justify-between">
                         <div>
-                            <div style="font-weight: 700; color: #0284c7; font-size: 15px; margin-bottom: 4px;">
+                            <div class="text-sm font-bold text-teal-300 mb-1">
                                 {{ s.get_weekday_display }}
                             </div>
-                            <div style="font-size: 14px; color: #334155; font-weight: 500;">
-                                🕒 {{ s.start_time|time:"H:i" }} — {{ s.end_time|time:"H:i" }}
+                            <div class="text-base font-semibold text-white">
+                                {{ s.start_time|time:"H:i" }} — {{ s.end_time|time:"H:i" }}
                             </div>
-                            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
-                                Длительность слота: <strong>{{ s.slot_duration }} мин</strong>
+                            <div class="text-xs text-slate-400 mt-1">
+                                Слот: <strong class="text-slate-200">{{ s.slot_duration }} мин</strong>
                             </div>
                         </div>
 
                         {% if can_manage %}
-                            <form method="post" style="margin-top: 10px; text-align: right;">
+                            <form method="post" class="mt-3 text-right">
                                 {% csrf_token %}
                                 <input type="hidden" name="action" value="delete_schedule">
                                 <input type="hidden" name="weekday" value="{{ s.weekday }}">
-                                <button type="submit" onclick="return confirm('Удалить {{ s.get_weekday_display }} из регулярного графика?')" 
-                                        style="background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline;">
-                                    Удалить день
+                                <button type="submit" onclick="return confirm('Удалить {{ s.get_weekday_display }} из графика?')" 
+                                        class="text-xs text-red-400 hover:text-red-300 transition">
+                                    <i class="fa-regular fa-trash-can mr-1"></i> Удалить
                                 </button>
                             </form>
                         {% endif %}
@@ -67,24 +70,25 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div style="padding: 24px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 8px; font-size: 14px;">
-                Регулярный график ещё не настроен. Добавьте рабочие дни ниже.
+            <div class="text-sm text-slate-500 py-6 text-center bg-slate-800/40 rounded-xl">
+                Регулярный график ещё не настроен. Настройте рабочие дни ниже.
             </div>
         {% endif %}
 
-        <!-- Форма добавления/изменения графика (без forms.py) -->
+        <!-- Форма добавления рабочего дня -->
         {% if can_manage %}
-            <div style="background: #f1f5f9; border-radius: 8px; padding: 16px; margin-top: 16px;">
-                <div style="font-weight: 600; font-size: 14px; color: #334155; margin-bottom: 12px;">
-                    ➕ Настроить / изменить рабочий день:
-                </div>
-                <form method="post" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-xl p-5 mt-4">
+                <h3 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-teal-400 text-xs"></i> Настроить / изменить рабочий день
+                </h3>
+
+                <form method="post" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="save_schedule">
 
-                    <div style="min-width: 140px; flex: 1;">
-                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">День недели:</label>
-                        <select name="weekday" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: white;">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">День недели:</label>
+                        <select name="weekday" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-teal-500">
                             {% for num, name, is_configured in weekday_choices %}
                                 <option value="{{ num }}">
                                     {{ name }} {% if is_configured %}(настроен){% endif %}
@@ -93,74 +97,84 @@
                         </select>
                     </div>
 
-                    <div style="width: 110px;">
-                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">Начало:</label>
-                        <input type="time" name="start_time" value="09:00" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
-                    </div>
-
-                    <div style="width: 110px;">
-                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">Конец:</label>
-                        <input type="time" name="end_time" value="17:00" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
-                    </div>
-
-                    <div style="width: 120px;">
-                        <label style="display: block; font-size: 12px; font-weight: 500; color: #475569; margin-bottom: 4px;">Слот (мин):</label>
-                        <select name="slot_duration" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: white;">
-                            <option value="15">15 минут</option>
-                            <option value="20">20 минут</option>
-                            <option value="30" selected>30 минут</option>
-                            <option value="45">45 минут</option>
-                            <option value="60">60 минут</option>
-                        </select>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Начало:</label>
+                        <input type="time" name="start_time" value="09:00" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-teal-500">
                     </div>
 
                     <div>
-                        <button type="submit" class="btn" style="padding: 9px 18px; font-size: 13px;">Сохранить день</button>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Окончание:</label>
+                        <input type="time" name="end_time" value="17:00" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-teal-500">
+                    </div>
+
+                    <div>
+                        <button type="submit" class="w-full py-2 px-4 rounded-xl text-sm font-medium bg-teal-500 hover:bg-teal-400 text-white transition shadow-md shadow-teal-500/20">
+                            Сохранить
+                        </button>
                     </div>
                 </form>
             </div>
         {% endif %}
     </div>
 
-    <!-- 2. Список активных слотов -->
-    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <!-- 2. Временные слоты записи -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-                <h3 style="margin: 0 0 4px 0; font-size: 18px; color: #1e293b;">
-                    🕒 Временные слоты записи (всего: {{ slots.count }})
-                </h3>
-                <p style="margin: 0; color: #64748b; font-size: 13px;">
-                    Свободные и забронированные слоты на будущие даты
-                </p>
+                <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-check text-emerald-400"></i>
+                    <span>Временные слоты записи (всего: {{ slots.count }})</span>
+                </h2>
+                <p class="text-slate-400 text-xs mt-1">Окошки времени для бронирования приёмов пациентами</p>
             </div>
+
             {% if can_manage %}
-                <a href="/schedules/doctor/{{ doctor.id }}/slots/create/" class="btn" style="font-size: 13px;">+ Создать слот</a>
+                <a href="{% url 'slot_create' doctor.pk %}" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition flex items-center gap-1.5 self-start sm:self-auto">
+                    <i class="fa-solid fa-plus text-xs"></i> Создать слот
+                </a>
             {% endif %}
         </div>
 
         {% if slots %}
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px;">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {% for slot in slots %}
-                    <div style="border: 1px solid {% if slot.status == 'free' %}#bbf7d0{% else %}#fed7aa{% endif %}; border-radius: 8px; padding: 10px; background: {% if slot.status == 'free' %}#f0fdf4{% else %}#fff7ed{% endif %}; position: relative;">
-                        <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 2px;">
-                            {{ slot.date|date:"d.m.Y (D)" }}
+                    <div class="p-3 rounded-xl border transition flex flex-col justify-between 
+                        {% if slot.status == 'free' %}
+                            bg-emerald-950/30 border-emerald-800/50 hover:border-emerald-700
+                        {% else %}
+                            bg-amber-950/30 border-amber-800/50 hover:border-amber-700
+                        {% endif %}">
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400">
+                                {{ slot.date|date:"d.m.Y (D)" }}
+                            </div>
+                            <div class="text-sm font-bold text-white mt-0.5">
+                                {{ slot.start_time|time:"H:i" }} — {{ slot.end_time|time:"H:i" }}
+                            </div>
                         </div>
-                        <div style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
-                            {{ slot.start_time|time:"H:i" }} — {{ slot.end_time|time:"H:i" }}
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                        <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-800">
                             {% if slot.status == 'free' %}
-                                <span style="font-size: 11px; font-weight: 600; color: #15803d; background: #dcfce7; padding: 2px 6px; border-radius: 4px;">Свободен</span>
+                                <span class="text-[11px] font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Свободен</span>
+                                {% if can_manage %}
+                                    <form method="post" action="{% url 'slot_delete' slot.pk %}" class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit" onclick="return confirm('Удалить слот {{ slot.start_time|time:"H:i" }}?')" 
+                                                class="text-xs text-red-400 hover:text-red-300 transition" title="Удалить слот">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
                             {% else %}
-                                <span style="font-size: 11px; font-weight: 600; color: #c2410c; background: #ffedd5; padding: 2px 6px; border-radius: 4px;">Занят</span>
+                                <span class="text-[11px] font-medium text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Занят</span>
                             {% endif %}
                         </div>
                     </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div style="padding: 24px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 8px; font-size: 14px;">
-                На ближайшие дни слотов ещё нет. Настройте график работы выше и нажмите «Сгенерировать слоты».
+            <div class="text-sm text-slate-500 py-8 text-center bg-slate-800/40 rounded-xl">
+                На будущие даты слотов пока нет. Нажмите «+ Создать слот», чтобы добавить приемные часы.
             </div>
         {% endif %}
     </div>

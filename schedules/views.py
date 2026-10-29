@@ -87,7 +87,6 @@ def days_off(request, doctor_id):
                     error = 'Этот день уже добавлен в выходные'
                 else:
                     DayOff.objects.create(doctor=doctor, date=date, reason=reason)
-                    # Удаляем свободные слоты на этот день (согласно ТЗ)
                     doctor.slots.filter(date=date, status='free').delete()
                     return redirect('days_off', doctor_id=doctor.id)
 
@@ -131,8 +130,6 @@ def slot_create(request, doctor_id):
                 error = 'Время окончания должно быть позже времени начала'
             elif DayOff.objects.filter(doctor=doctor, date=date).exists():
                 error = 'В этот день у врача выходной'
-            # Предотвращение дублирующихся и пересекающихся слотов:
-            # Новый слот пересекается со старым, если: start_time < old.end_time AND end_time > old.start_time
             elif TimeSlot.objects.filter(
                 doctor=doctor,
                 date=date,
@@ -154,3 +151,18 @@ def slot_create(request, doctor_id):
         'doctor': doctor,
         'error': error,
     })
+
+def slot_delete(request, pk):
+    slot = get_object_or_404(TimeSlot, pk=pk)
+    if not _check_doctor_permission(request, slot.doctor):
+        return HttpResponse('<h1>Доступ запрещен</h1>', status=403)
+
+    doctor_id = slot.doctor.id
+    if request.method == 'POST':
+        # Условие интеграции по ТЗ: нельзя удалять слот, если он занят (booked)
+        if slot.status == 'free':
+            slot.delete()
+        else:
+            return HttpResponse('<h1>Ошибка: нельзя удалить забронированный слот</h1>', status=400)
+
+    return redirect('doctor_schedule', doctor_id=doctor_id)

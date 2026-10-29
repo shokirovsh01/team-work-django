@@ -1,111 +1,140 @@
 {% extends 'base.html' %}
 
-{% block title %}Каталог врачей — MedBook{% endblock %}
+{% block title %}Каталог врачей — MedClinic{% endblock %}
 
 {% block content %}
-<div style="max-width: 860px; margin: 0 auto;">
+<div class="space-y-6">
 
-    <!-- Заголовок -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <!-- Заголовок и кнопка добавления -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
         <div>
-            <h1 style="margin: 0; font-size: 26px; color: #1e293b;">Врачи клиники</h1>
-            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Выберите врача для консультации и записи на приём</p>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-user-doctor text-teal-400"></i>
+                <span>Врачи клиники</span>
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">Выберите квалифицированного специалиста для консультации и записи на приём</p>
         </div>
         {% if user.is_staff %}
-            <a href="/doctors/create/" class="btn" style="padding: 9px 18px;">+ Добавить врача</a>
+            <a href="/doctors/create/" class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-medium text-sm bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+                <i class="fa-solid fa-plus mr-2"></i> Добавить врача
+            </a>
         {% endif %}
     </div>
 
-    <!-- Поиск и фильтр -->
-    <form method="GET" style="background: #fff; padding: 14px 18px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-        <input type="text" name="q" value="{{ q }}" placeholder="Поиск врача по имени или специальности..." style="flex: 2; min-width: 220px; margin-top: 0;">
-        <select name="specialization" style="flex: 1; min-width: 180px; margin-top: 0;">
-            <option value="">Все специализации</option>
-            {% for s in specializations %}
-                <option value="{{ s.id }}" {% if selected_specialization == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" style="margin-top: 0;">Найти</button>
-        {% if q or selected_specialization %}
-            <a href="/doctors/" class="btn btn-outline" style="margin-top: 0;">Сбросить</a>
-        {% endif %}
+    <!-- Поиск и фильтрация -->
+    <form method="GET" class="bg-slate-900/70 border border-slate-800 p-4 rounded-2xl shadow-md flex flex-wrap gap-3 items-center">
+        <div class="relative flex-1 min-w-[240px]">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" name="q" value="{{ q }}" placeholder="Поиск по имени, фамилии или биографии..." 
+                   class="w-full pl-10 pr-4 py-2 bg-slate-800/80 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 transition">
+        </div>
+
+        <div class="min-w-[200px]">
+            <select name="specialization" 
+                    class="w-full px-4 py-2 bg-slate-800/80 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-teal-500 transition">
+                <option value="">Все специализации</option>
+                {% for s in specializations %}
+                    <option value="{{ s.id }}" {% if selected_specialization == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="submit" class="px-5 py-2 rounded-xl text-sm font-medium bg-teal-500 hover:bg-teal-400 text-white transition flex items-center gap-1.5 shadow-md shadow-teal-500/20">
+                <i class="fa-solid fa-filter text-xs"></i> Найти
+            </button>
+            {% if q or selected_specialization %}
+                <a href="/doctors/" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                    Сбросить
+                </a>
+            {% endif %}
+        </div>
     </form>
 
-    <!-- Список врачей -->
+    <!-- Список карточек врачей -->
     {% if doctors %}
-        <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             {% for doctor in doctors %}
-                <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.04);">
+                <div class="bg-slate-900/80 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 shadow-lg transition duration-200 flex flex-col sm:flex-row gap-5">
                     
                     <!-- Фотография врача -->
-                    <div style="width: 140px; height: 165px; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                    <div class="w-full sm:w-36 h-48 rounded-xl overflow-hidden bg-slate-800 border border-slate-700/80 flex-shrink-0 flex items-center justify-center">
                         {% if doctor.photo %}
-                            <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center;">
+                            <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" class="w-full h-full object-cover object-top">
                         {% else %}
-                            <div style="font-size: 50px; color: #94a3b8;">👨‍⚕️</div>
+                            <div class="text-4xl text-slate-500">
+                                <i class="fa-solid fa-user-doctor"></i>
+                            </div>
                         {% endif %}
                     </div>
 
-                    <!-- Информация о докторе -->
-                    <div style="flex: 1; min-width: 280px;">
-                        
-                        <!-- Специализация и активность -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                            <span style="background: #e0f2fe; color: #0284c7; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 6px;">
-                                {{ doctor.specialization.name|default:"Терапевт" }}
-                            </span>
-                            {% if not doctor.is_active %}
-                                <span style="background: #fee2e2; color: #dc2626; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
-                                    Не ведёт приём
+                    <!-- Информация о враче -->
+                    <div class="flex-1 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-500/15 text-teal-300 border border-teal-500/30">
+                                    {{ doctor.specialization.name|default:"Общая практика" }}
                                 </span>
+                                {% if doctor.is_active %}
+                                    <span class="text-xs text-emerald-400 flex items-center gap-1">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span> Приём открыт
+                                    </span>
+                                {% else %}
+                                    <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-red-500/20 text-red-300 border border-red-500/30">
+                                        Не ведёт приём
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <h2 class="text-lg font-bold text-white hover:text-teal-300 transition">
+                                <a href="/doctors/{{ doctor.pk }}/">
+                                    {% if doctor.user.first_name or doctor.user.last_name %}
+                                        {{ doctor.user.first_name }} {{ doctor.user.last_name }}
+                                    {% else %}
+                                        {{ doctor.user.username }}
+                                    {% endif %}
+                                </a>
+                            </h2>
+
+                            <div class="text-xs text-slate-400 flex items-center gap-3 mt-1">
+                                <span><i class="fa-solid fa-award text-amber-400 mr-1"></i> Стаж: <strong class="text-slate-200">{{ doctor.experience_years }} лет</strong></span>
+                                {% if doctor.phone %}
+                                    <span><i class="fa-solid fa-phone text-slate-400 mr-1"></i> {{ doctor.phone }}</span>
+                                {% endif %}
+                            </div>
+
+                            {% if doctor.bio %}
+                                <p class="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                                    {{ doctor.bio }}
+                                </p>
                             {% endif %}
                         </div>
 
-                        <!-- ФИО врача -->
-                        <h2 style="margin: 0 0 6px 0; font-size: 20px; color: #0f172a;">
-                            {{ doctor.user.get_full_name|default:doctor.user.username }}
-                        </h2>
-
-                        <!-- Стаж и контакты -->
-                        <div style="font-size: 14px; color: #475569; margin-bottom: 8px;">
-                            <span>Стаж: <strong>{{ doctor.experience_years }} лет</strong></span>
-                            {% if doctor.phone %}
-                                <span style="margin-left: 15px;">Телефон: <strong>{{ doctor.phone }}</strong></span>
-                            {% endif %}
-                        </div>
-
-                        <!-- Краткая биография -->
-                        {% if doctor.bio %}
-                            <p style="margin: 0 0 10px 0; font-size: 13px; color: #64748b; line-height: 1.4;">
-                                {{ doctor.bio|truncatewords:16 }}
-                            </p>
-                        {% endif %}
-
-                        <!-- Топ 2-3 услуги врача -->
+                        <!-- Популярные услуги врача -->
                         {% if doctor.services.all %}
-                            <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px;">
-                                {% for s in doctor.services.all|slice:":3" %}
-                                    <span style="background: #f1f5f9; color: #334155; font-size: 12px; padding: 3px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                                        {{ s.name }} &bull; <strong>{{ s.price }} ₽</strong>
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                {% for s in doctor.services.all|slice:":2" %}
+                                    <span class="text-[11px] bg-slate-800/80 border border-slate-700/80 text-slate-300 px-2 py-0.5 rounded-lg">
+                                        {{ s.name }} &bull; <strong class="text-teal-300">{{ s.price }} ₽</strong>
                                     </span>
                                 {% endfor %}
-                                {% if doctor.services.all|length > 3 %}
-                                    <span style="color: #64748b; font-size: 12px;">+ ещё {{ doctor.services.all|length|add:"-3" }}</span>
+                                {% if doctor.services.all|length > 2 %}
+                                    <span class="text-[11px] text-slate-500 px-1 py-0.5">+ ещё {{ doctor.services.all|length|add:"-2" }}</span>
                                 {% endif %}
                             </div>
                         {% endif %}
 
                         <!-- Кнопки действий -->
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <a href="/doctors/{{ doctor.pk }}/" class="btn" style="padding: 7px 16px; font-size: 13px;">
-                                Подробнее о враче
+                        <div class="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                            <a href="/doctors/{{ doctor.pk }}/" class="flex-1 text-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:from-teal-400 hover:to-emerald-500 transition shadow-sm shadow-teal-500/20">
+                                Подробнее
                             </a>
-                            <a href="/schedules/doctor/{{ doctor.pk }}/" class="btn btn-outline" style="padding: 7px 16px; font-size: 13px;">
-                                Расписание
+                            <a href="/schedules/doctor/{{ doctor.pk }}/" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" title="Расписание приёма">
+                                <i class="fa-regular fa-calendar-days mr-1 text-teal-400"></i> Расписание
                             </a>
                             {% if user.is_staff or user.doctor_profile == doctor %}
-                                <a href="/doctors/{{ doctor.pk }}/edit/" class="btn btn-outline" style="padding: 7px 12px; font-size: 13px;" title="Редактировать профиль">
-                                    ✏️
+                                <a href="/doctors/{{ doctor.pk }}/edit/" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Редактировать">
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                             {% endif %}
                         </div>
@@ -115,9 +144,12 @@
             {% endfor %}
         </div>
     {% else %}
-        <div style="background: #fff; padding: 40px; text-align: center; border-radius: 10px; border: 1px solid #e2e8f0; color: #64748b;">
-            <p style="font-size: 18px; margin: 0 0 8px 0;">Врачи не найдены</p>
-            <p style="font-size: 14px; margin: 0;">Попробуйте сбросить фильтры или ввести другое имя.</p>
+        <div class="bg-slate-900/70 border border-slate-800 p-12 text-center rounded-2xl shadow-lg">
+            <div class="w-16 h-16 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-user-slash"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Врачи не найдены</h3>
+            <p class="text-sm text-slate-400">Попробуйте изменить параметры поиска или выбрать другую специальность.</p>
         </div>
     {% endif %}
 
