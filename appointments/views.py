@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
-from .models import Appointment
+from .models import Appointment,Doctor
 from .forms import AppointmentBookForm
 
 
@@ -38,3 +38,10 @@ class AppointmentCancelView(LoginRequiredMixin,View):
         return redirect('my_appointments')
 
     
+class AppointmentsAvailableView(LoginRequiredMixin,ListView):
+    model = Doctor
+    template_name = 'media2/doctor_appointments.html'
+    context_object_name = 'doctor'
+
+    # def get_queryset(self):
+    #     return Doctor.objects.filter()
