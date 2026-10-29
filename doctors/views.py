@@ -175,7 +175,8 @@ def specialization_list(request):
                     specialization=spec
                 )
             return redirect('specialization_list')
-        specializations = Specialization.objects.all().prefetch_related('services', 'doctors')
-        return render(request, 'doctors/specialization_list.html', {
-            'specializations': specializations,
-        })
+
+    specializations = Specialization.objects.all().prefetch_related('services', 'doctors')
+    return render(request, 'doctors/specialization_list.html', {
+        'specializations': specializations,
+    })
