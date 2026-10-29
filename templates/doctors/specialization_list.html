@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Специализации и услуги — MedBook{% endblock %}
+
+{% block content %}
+<div style="max-width: 860px; margin: 0 auto;">
+
+    <!-- Заголовок -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 style="margin: 0; font-size: 26px; color: #1e293b;">Специализации и услуги клиники</h1>
+            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Медицинские направления, процедуры и прайс-лист</p>
+        </div>
+        <a href="/doctors/" class="btn btn-outline">&larr; Каталог врачей</a>
+    </div>
+
+    <!-- Форма добавления специализации (только для администратора) -->
+    {% if user.is_staff %}
+        <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
+            <h3 style="margin: 0 0 12px 0; font-size: 17px; color: #0f172a;">+ Добавить новую специализацию</h3>
+            <form method="POST" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_specialization">
+                <input type="text" name="name" placeholder="Название (например, Дерматология)" required style="flex: 1; min-width: 220px; margin-top: 0;">
+                <input type="text" name="description" placeholder="Краткое описание направления" style="flex: 2; min-width: 260px; margin-top: 0;">
+                <button type="submit" style="margin-top: 0;">Добавить</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <!-- Список специализаций -->
+    {% if specializations %}
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            {% for spec in specializations %}
+                <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; box-shadow: 0 2px 5px rgba(0,0,0,0.04);">
+                    
+                    <!-- Шапка направления -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 21px; color: #0f172a;">{{ spec.name }}</h2>
+                            {% if spec.description %}
+                                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">{{ spec.description }}</p>
+                            {% endif %}
+                        </div>
+                        <a href="/doctors/?specialization={{ spec.id }}" class="btn btn-outline" style="font-size: 13px; padding: 6px 14px; white-space: nowrap;">
+                            Врачи ({{ spec.doctors.count }}) &rarr;
+                        </a>
+                    </div>
+
+                    <!-- Список услуг по направлению -->
+                    <div style="margin-top: 16px;">
+                        <strong style="font-size: 14px; color: #334155; display: block; margin-bottom: 8px;">Медицинские услуги:</strong>
+                        {% if spec.services.all %}
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                {% for s in spec.services.all %}
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #f1f5f9; font-size: 14px;">
+                                        <span style="color: #1e293b;">{{ s.name }} <small style="color: #64748b;">({{ s.duration }} мин)</small></span>
+                                        <strong style="color: #0284c7;">{{ s.price }} ₽</strong>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p style="color: #94a3b8; font-size: 13px; margin: 0;">Услуги по данному направлению ещё не добавлены.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Форма добавления услуги к этому направлению (для админа) -->
+                    {% if user.is_staff %}
+                        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #e2e8f0;">
+                            <details style="font-size: 13px;">
+                                <summary style="cursor: pointer; color: #0284c7; font-weight: 600;">+ Добавить услугу к направлению «{{ spec.name }}»</summary>
+                                <form method="POST" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="add_service">
+                                    <input type="hidden" name="specialization_id" value="{{ spec.id }}">
+                                    <input type="text" name="name" placeholder="Название услуги" required style="flex: 2; min-width: 180px; margin-top: 0; font-size: 13px;">
+                                    <input type="number" name="price" placeholder="Цена (₽)" required style="width: 100px; margin-top: 0; font-size: 13px;">
+                                    <input type="number" name="duration" placeholder="Мин" value="30" style="width: 80px; margin-top: 0; font-size: 13px;">
+                                    <button type="submit" style="margin-top: 0; padding: 6px 14px; font-size: 13px;">Сохранить услугу</button>
+                                </form>
+                            </details>
+                        </div>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="background: #fff; padding: 40px; text-align: center; border-radius: 10px; border: 1px solid #e2e8f0; color: #64748b;">
+            <p style="font-size: 18px; margin: 0 0 8px 0;">Специализации не найдены</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

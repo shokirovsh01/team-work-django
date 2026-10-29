@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать слот — {{ doctor.user.get_full_name|default:doctor.user.username }} - MedBook{% endblock %}
+
+{% block content %}
+<div style="max-width: 550px; margin: 30px auto;">
+
+    <!-- Кнопка назад -->
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'doctor_schedule' doctor.pk %}" class="btn btn-outline" style="font-size: 13px;">&larr; Назад к расписанию</a>
+    </div>
+
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        
+        <h2 style="margin: 0 0 6px 0; font-size: 22px; color: #1e293b;">
+            ➕ Создание слота записи
+        </h2>
+        <p style="margin: 0 0 20px 0; font-size: 14px; color: #64748b;">
+            Врач: <strong style="color: #0284c7;">{{ doctor.user.get_full_name|default:doctor.user.username }}</strong>
+        </p>
+
+        {% if error %}
+            <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+                ⚠️ {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-weight: 600; font-size: 14px; color: #334155; margin-bottom: 6px;">
+                    Дата приёма *
+                </label>
+                <input type="date" name="date" required 
+                       style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+
+            <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                <div style="flex: 1;">
+                    <label style="display: block; font-weight: 600; font-size: 14px; color: #334155; margin-bottom: 6px;">
+                        Время начала *
+                    </label>
+                    <input type="time" name="start_time" required 
+                           style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                </div>
+
+                <div style="flex: 1;">
+                    <label style="display: block; font-weight: 600; font-size: 14px; color: #334155; margin-bottom: 6px;">
+                        Время окончания *
+                    </label>
+                    <input type="time" name="end_time" required 
+                           style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <a href="{% url 'doctor_schedule' doctor.pk %}" class="btn btn-outline" style="padding: 10px 20px;">
+                    Отмена
+                </a>
+                <button type="submit" class="btn" style="padding: 10px 24px;">
+                    Создать слот
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+{% endblock %}

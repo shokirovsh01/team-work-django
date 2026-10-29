@@ -1,16 +1,56 @@
 {% extends 'base.html' %}
-
-{% block title %}
-    {% if doctor %}Редактирование: {{ doctor }}{% else %}Добавление врача{% endif %}
-{% endblock %}
-
+{% block title %}{% if doctor %}Редактирование врача{% else %}Добавить врача{% endif %}{% endblock %}
 {% block content %}
-    <h1>{% if doctor %}Редактирование профиля врача{% else %}Добавление нового врача{% endif %}</h1>
-
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Сохранить</button>
-        <a href="/doctors/">Отмена</a>
-    </form>
+<h1>{% if doctor %}Редактирование врача: {{ doctor.user.get_full_name|default:doctor.user.username }}{% else %}Добавление нового врача{% endif %}</h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if not doctor %}
+        <label>Имя *</label>
+        <input type="text" name="first_name" required>
+        <label>Фамилия *</label>
+        <input type="text" name="last_name" required>
+        <label>Логин (Username) *</label>
+        <input type="text" name="username" required>
+        <label>Пароль *</label>
+        <input type="password" name="password" required>
+        <label>Email</label>
+        <input type="email" name="email">
+    {% else %}
+        <label>Имя *</label>
+        <input type="text" name="first_name" value="{{ doctor.user.first_name }}" required>
+        <label>Фамилия *</label>
+        <input type="text" name="last_name" value="{{ doctor.user.last_name }}" required>
+        <label>Email</label>
+        <input type="email" name="email" value="{{ doctor.user.email }}">
+    {% endif %}
+    <label>Специализация</label>
+    <select name="specialization">
+        <option value="">-- Выберите специализацию --</option>
+        {% for s in specializations %}
+            <option value="{{ s.id }}" {% if doctor and doctor.specialization_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+    </select>
+    <label>Услуги (зажмите Ctrl для выбора нескольких)</label>
+    <select name="services" multiple size="4">
+        {% for serv in services %}
+            <option value="{{ serv.id }}" {% if serv in doctor.services.all %}selected{% endif %}>{{ serv.name }} ({{ serv.price }} руб.)</option>
+        {% endfor %}
+    </select>
+    <label>Стаж работы (лет)</label>
+    <input type="number" name="experience_years" value="{{ doctor.experience_years|default:0 }}" min="0">
+    <label>Номер телефона</label>
+    <input type="text" name="phone" value="{{ doctor.phone|default:'' }}">
+    <label>Фотография</label>
+    <input type="file" name="photo">
+    <label>О враче (биография)</label>
+    <textarea name="bio" rows="4">{{ doctor.bio|default:'' }}</textarea>
+    <div style="margin-top: 15px;">
+        <label style="display: inline;">
+            <input type="checkbox" name="is_active" {% if doctor %}{% if doctor.is_active %}checked{% endif %}{% else %}checked{% endif %}>
+            Врач активен (ведёт приём)
+        </label>
+    </div>
+    <button type="submit">Сохранить</button>
+    <a href="/doctors/create/">Отмена</a>
+</form>
 {% endblock %}
