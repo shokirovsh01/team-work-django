@@ -26,9 +26,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'appointments',
     'notifications',
+    'accountsapp',
+    'clinicapp',
+    'reviewsapp',
     'doctors',
     'schedules',
-    
 ]
 
 MIDDLEWARE = [
@@ -126,6 +128,8 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'shokirovsh01@gmail.com'
 EMAIL_HOST_PASSWORD = 'nqac rfna jukg tahf'
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = 'login'
