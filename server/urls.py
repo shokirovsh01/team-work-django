@@ -10,9 +10,9 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('doctors/',include('doctors.urls')),
     path('schedules/',include('schedules.urls')),
-     path('accountsapp/', include('accountsapp.urls')),
+    path('', include('accountsapp.urls')),
     path('clinicapp/', include('clinicapp.urls')),
-    path('reviewapp/', include('reviewapp.urls')),
+    path('reviewsapp/', include('reviewsapp.urls')),
 
 ]
 
