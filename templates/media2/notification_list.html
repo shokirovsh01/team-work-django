@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Уведомления — MedClinic{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Заголовок страницы -->
+    <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
+        <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
+            <i class="fa-regular fa-bell text-amber-400"></i>
+            <span>Уведомления</span>
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">Новости ваших записей и сообщения от клиники</p>
+    </div>
+
+    <!-- Список уведомлений -->
+    {% if notifications %}
+        <div class="space-y-3">
+            {% for note in notifications %}
+                <div class="bg-slate-900/70 border rounded-2xl p-5 shadow-md transition flex flex-col sm:flex-row sm:items-center justify-between gap-4
+                    {% if note.is_read %}border-slate-800 hover:border-slate-700{% else %}border-amber-500/30 bg-amber-500/5{% endif %}">
+
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0
+                            {% if note.is_read %}bg-slate-800 text-slate-500{% else %}bg-amber-500/10 border border-amber-500/20 text-amber-400{% endif %}">
+                            <i class="fa-solid {% if note.is_read %}fa-envelope-open{% else %}fa-envelope{% endif %}"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h3 class="font-semibold {% if note.is_read %}text-slate-300{% else %}text-white{% endif %}">{{ note.title }}</h3>
+                                {% if not note.is_read %}
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                        Новое
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <p class="text-slate-400 text-sm mt-1">{{ note.message }}</p>
+                            <p class="text-xs text-slate-500 mt-2">{{ note.created_at|date:"d.m.Y H:i" }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Кнопка "прочитано" -->
+                    {% if not note.is_read %}
+                        <form action="{% url 'notifications:notification_read' note.pk %}" method="post" class="shrink-0">
+                            {% csrf_token %}
+                            <button type="submit" class="text-xs font-medium text-teal-400 hover:text-white bg-teal-500/10 hover:bg-teal-600 border border-teal-500/20 px-4 py-2 rounded-xl transition flex items-center space-x-1.5">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Прочитано</span>
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Пустое состояние -->
+        <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-12 text-center">
+            <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
+                <i class="fa-regular fa-bell-slash text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-200">Уведомлений пока нет</h3>
+            <p class="text-slate-400 text-sm mt-1">Здесь появятся сообщения о ваших записях и изменениях.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

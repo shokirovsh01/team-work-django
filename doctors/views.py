@@ -74,7 +74,6 @@ def doctor_create(request):
                 'specializations': Specialization.objects.all(),
                 'services': Service.objects.all(),
             })
-
         user = User.objects.create_user(
             username=username,
             password=password,
@@ -176,8 +175,7 @@ def specialization_list(request):
                     specialization=spec
                 )
             return redirect('specialization_list')
-
-    specializations = Specialization.objects.all().prefetch_related('services', 'doctors')
-    return render(request, 'doctors/specialization_list.html', {
-        'specializations': specializations,
-    })
+        specializations = Specialization.objects.all().prefetch_related('services', 'doctors')
+        return render(request, 'doctors/specialization_list.html', {
+            'specializations': specializations,
+        })

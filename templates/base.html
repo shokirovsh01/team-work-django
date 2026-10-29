@@ -1,37 +1,180 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="dark">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}MedBook{% endblock %}</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background: #f8fafc; color: #333; line-height: 1.5; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        nav { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 14px 20px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; }
-        nav a { text-decoration: none; color: #0d6efd; font-weight: 600; font-size: 15px; }
-        nav a:hover { text-decoration: underline; }
-        .error { background: #fee2e2; color: #dc2626; padding: 12px; border-radius: 6px; font-weight: 500; margin-bottom: 20px; border: 1px solid #fecaca; }
-        label { display: block; margin-top: 12px; font-weight: 600; font-size: 14px; }
-        input[type="text"], input[type="password"], input[type="email"], input[type="number"], select, textarea {
-            width: 100%; max-width: 420px; padding: 8px 10px; margin-top: 4px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MedClinic — Система записи к врачам{% endblock %}</title>
+    
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Подключение шрифта Inter и иконок FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
         }
-        button, .btn { display: inline-block; padding: 8px 16px; background: #0d6efd; color: #fff; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: 500; }
-        button:hover, .btn:hover { background: #0b5ed7; }
-        .btn-outline { background: #fff; color: #475569; border: 1px solid #cbd5e1; }
-        .btn-outline:hover { background: #f1f5f9; color: #1e293b; }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Стилизация полосы прокрутки */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
     </style>
+
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <nav>
-        <strong style="color: #0f172a; font-size: 17px; margin-right: 10px;">MedBook</strong>
-        <a href="/doctors/">Все врачи</a>
-        <a href="/doctors/create/">+ Добавить врача</a>
-        <a href="/doctors/specializations/">Специализации</a>
-    </nav>
-    <div class="container">
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white">
+
+    <!-- Верхняя навигационная панель (Navbar) -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- Логотип -->
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="flex items-center space-x-3 group">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform duration-200">
+                            <i class="fa-solid fa-staff-snake text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-teal-400 bg-clip-text text-transparent">
+                                MedClinic
+                            </span>
+                            <span class="block text-[10px] text-slate-400 uppercase tracking-widest -mt-1">Онлайн-поликлиника</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Навигационные ссылки (Десктоп) -->
+                <nav class="hidden md:flex items-center space-x-1">
+                    <a href="{% url 'appointments:my_appointments' %}" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-regular fa-calendar-check text-teal-400"></i>
+                        <span>Мои приёмы</span>
+                    </a>
+                    
+                    <a href="{% url 'appointments:appointment_book' 1 %}" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-plus-circle text-emerald-400"></i>
+                        <span>Записаться</span>
+                    </a>
+
+                    <a href="{% url 'notifications:notification_list' %}" class="relative px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-regular fa-bell text-amber-400"></i>
+                        <span>Уведомления</span>
+                    </a>
+                </nav>
+
+                <!-- Правый блок: Профиль / Авторизация -->
+                <div class="hidden md:flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <div class="flex items-center space-x-3 bg-slate-800/70 border border-slate-700/60 rounded-full py-1.5 px-4">
+                            <div class="w-7 h-7 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-300 font-semibold text-xs">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                            <span class="text-sm font-medium text-slate-200">{{ user.username }}</span>
+                            
+                            {% if user.is_staff %}
+                                <a href="/admin/" class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full hover:bg-indigo-500/30 transition" title="Админ-панель">
+                                    Admin
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <a href="/admin/login/?next=/appointments/my/" class="px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Войти
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Кнопка мобильного меню -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none p-2 rounded-lg bg-slate-800/50 border border-slate-700">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Мобильное выпадающее меню -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
+            <a href="{% url 'appointments:my_appointments' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-regular fa-calendar-check text-teal-400 mr-2"></i> Мои приёмы
+            </a>
+            <a href="{% url 'appointments:appointment_book' 1 %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-solid fa-plus-circle text-emerald-400 mr-2"></i> Записаться на приём
+            </a>
+            <a href="{% url 'notifications:notification_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-regular fa-bell text-amber-400 mr-2"></i> Уведомления
+            </a>
+            <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                {% if user.is_authenticated %}
+                    <span class="text-sm text-slate-400">Вы вошли как: <strong class="text-white">{{ user.username }}</strong></span>
+                {% else %}
+                    <a href="/admin/login/" class="text-sm text-teal-400 font-medium">Войти в аккаунт</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Блок системных уведомлений Django (Messages) -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+            {% for message in messages %}
+                <div class="flex items-center justify-between p-4 mb-3 rounded-xl border {% if message.tags == 'error' %}bg-red-950/60 border-red-800 text-red-200{% elif message.tags == 'success' %}bg-emerald-950/60 border-emerald-800 text-emerald-200{% else %}bg-slate-900 border-slate-700 text-slate-200{% endif %} shadow-md">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-red-400{% elif message.tags == 'success' %}fa-circle-check text-emerald-400{% else %}fa-circle-info text-teal-400{% endif %} text-lg"></i>
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Основной контент страницы -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="border-t border-slate-800/80 bg-slate-900/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-slate-500">
+            &copy; 2026 MedClinic — Система записи к врачам
+        </div>
+    </footer>
+
+    <script>
+        // Мобильное меню
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>
