@@ -81,8 +81,8 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         profile, created = PatientProfile.objects.get_or_create(user=self.request.user)
         return profile
-from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import logout 
 
 def logout_view(request):
-    auth_logout(request)
+    logout(request)
     return redirect('login')
