@@ -12,6 +12,7 @@ from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import logout 
 
 User = get_user_model()
 
@@ -81,3 +82,13 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         profile, created = PatientProfile.objects.get_or_create(user=self.request.user)
         return profile
+
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+
+
