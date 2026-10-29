@@ -13,6 +13,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import logout 
+from django.contrib.auth.models import Group
 
 User = get_user_model()
 
@@ -27,6 +28,10 @@ class RegisterViews(CreateView):
         user.is_active = False
         user.save()
         self.object = user
+
+        group, _ = Group.objects.get_or_create(name='Patient')
+        user.groups.add(group)
+        PatientProfile.objects.get_or_create(user=user)
 
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
