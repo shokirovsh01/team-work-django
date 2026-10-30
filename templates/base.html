@@ -83,6 +83,13 @@
                         <span>Специализации</span>
                     </a>
 
+                    {% if user.is_staff or user.is_superuser %}
+                        <a href="{% url 'stats' %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                            <i class="fa-solid fa-chart-pie text-indigo-400"></i>
+                            <span>Статистика</span>
+                        </a>
+                    {% endif %}
+
                     <a href="{% url 'appointments:my_appointments' %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
                         <i class="fa-regular fa-calendar-check text-emerald-400"></i>
                         <span>Мои приёмы</span>
