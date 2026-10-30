@@ -90,6 +90,27 @@
                         <i class="fa-regular fa-bell text-amber-400"></i>
                         <span>Уведомления</span>
                     </a>
+
+                    <a href="/clinic/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-hospital text-teal-400"></i>
+                        <span>О клинике</span>
+                    </a>
+
+                    <a href="/clinic/announcements/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-bullhorn text-amber-400"></i>
+                        <span>Объявления</span>
+                    </a>
+
+                    {% if user.is_staff %}
+                        <a href="/reviews/stats/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                            <i class="fa-solid fa-chart-line text-purple-400"></i>
+                            <span>Статистика</span>
+                        </a>
+                        <a href="/clinic/patients/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                            <i class="fa-solid fa-users text-sky-400"></i>
+                            <span>Пациенты</span>
+                        </a>
+                    {% endif %}
                 </nav>
 
                 <!-- Правый блок: Профиль / Авторизация -->
@@ -148,6 +169,20 @@
             <a href="{% url 'notifications:notification_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
                 <i class="fa-regular fa-bell text-amber-400 mr-2"></i> Уведомления
             </a>
+            <a href="/clinic/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-solid fa-hospital text-teal-400 mr-2"></i> О клинике
+            </a>
+            <a href="/clinic/announcements/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                <i class="fa-solid fa-bullhorn text-amber-400 mr-2"></i> Объявления
+            </a>
+            {% if user.is_staff %}
+                <a href="/reviews/stats/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                    <i class="fa-solid fa-chart-line text-purple-400 mr-2"></i> Статистика клиники
+                </a>
+                <a href="/clinic/patients/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
+                    <i class="fa-solid fa-users text-sky-400 mr-2"></i> Реестр пациентов
+                </a>
+            {% endif %}
             <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
                 {% if user.is_authenticated %}
                     <span class="text-sm text-slate-400">Вы вошли как: <strong class="text-white">{{ user.username }}</strong></span>

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Список пациентов — MedClinic{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-5xl mx-auto">
+
+    <!-- Заголовок -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-users text-teal-400"></i>
+                <span>Список зарегистрированных пациентов</span>
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">Реестр пациентов клиники (доступен только персоналу клиники)</p>
+        </div>
+    </div>
+
+    <!-- Таблица пациентов -->
+    <div class="rounded-2xl bg-slate-900/90 border border-slate-800 p-4 shadow-xl overflow-x-auto">
+        <table class="w-full text-sm text-slate-200">
+            <thead class="text-slate-400 text-left border-b border-slate-800 text-xs uppercase tracking-wider">
+                <tr>
+                    <th class="p-3">Имя</th>
+                    <th class="p-3">Фамилия</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Телефон</th>
+                    <th class="p-3">Дата рождения</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+            {% for p in object_list %}
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="p-3 font-semibold text-white">{{ p.user.first_name|default:p.user.username }}</td>
+                    <td class="p-3 text-slate-300">{{ p.user.last_name|default:"—" }}</td>
+                    <td class="p-3 text-slate-400">{{ p.user.email }}</td>
+                    <td class="p-3 text-teal-300 font-medium">{{ p.phone|default:"—" }}</td>
+                    <td class="p-3 text-slate-400">{{ p.birth_date|date:"d.m.Y"|default:"—" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="p-8 text-center text-slate-500">Зарегистрированных пациентов пока нет.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="flex items-center justify-center gap-3 pt-2">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                &larr; Назад
+            </a>
+        {% endif %}
+        <span class="text-xs text-slate-400">
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                Вперёд &rarr;
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
