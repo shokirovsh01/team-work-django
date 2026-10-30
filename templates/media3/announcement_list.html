@@ -9,7 +9,9 @@
 {% endif %}
 
 {% for a in object_list %}
-    <h3>{{ a.title }}</h3>
+    <h3>{{ a.title }}
+    {% if not a.is_published %}<small>(черновик)</small>{% endif %}
+</h3>
     <p>{{ a.content }}</p>
     <small>{{ a.created_at|date:"d.m.Y H:i" }}</small>
 

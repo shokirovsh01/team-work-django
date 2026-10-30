@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import DetailView, UpdateView, ListView, CreateView
 
 from accountsapp.models import PatientProfile
-from accountsapp.roles import ClinicAdminRequiredMixin, StaffRequiredMixin
+from accountsapp.roles import ClinicAdminRequiredMixin, StaffRequiredMixin, is_clinic_admin
 from .forms import ClinicForm, AnnouncementForm
 from .models import Clinic, ClinicAnnouncement
 
@@ -64,8 +64,10 @@ class AnnouncementListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return ClinicAnnouncement.objects.filter(is_published=True)
-
+        qs = ClinicAnnouncement.objects.all()
+        if not is_clinic_admin(self.request.user):
+            qs = qs.filter(is_published=True)
+        return qs
     
 class AnnouncementDeleteView(ClinicAdminRequiredMixin, View):
     def post(self, request, pk):
