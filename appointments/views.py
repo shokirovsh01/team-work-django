@@ -110,4 +110,7 @@ class AppointmentCompleteView(LoginRequiredMixin,View):
         appointment.status='completed'
         appointment.save()
         return redirect('appointments:doctor_appointments')
+
+
+    
     
