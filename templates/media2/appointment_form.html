@@ -37,12 +37,12 @@
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {% for slot in slots %}
-                        <button type="button" 
-                                onclick="document.getElementById('appointment-date-input').value = '{{ slot.date|date:"Y-m-d" }}T{{ slot.start_time|time:"H:i" }}';"
-                                class="p-2.5 rounded-xl text-left bg-emerald-950/40 border border-emerald-800/60 hover:border-emerald-500 hover:bg-emerald-950/70 transition">
+                    <!-- <button type="button" 
+    onclick="document.getElementById('appointment-date-input').value='{{ slot.date|date:"Y-m-d" }}T{{ slot.start_time|time:"H:i" }}'"
+    class="p-2.5 rounded-xl text-left bg-emerald-950/40 border border-emerald-800/60 hover:border-emerald-500 hover:bg-emerald-950/70 transition">
                             <div class="text-[11px] text-emerald-300 font-semibold">{{ slot.date|date:"d.m (D)" }}</div>
                             <div class="text-sm font-bold text-white mt-0.5">{{ slot.start_time|time:"H:i" }} — {{ slot.end_time|time:"H:i" }}</div>
-                        </button>
+                        </button> -->
                     {% endfor %}
                 </div>
             </div>

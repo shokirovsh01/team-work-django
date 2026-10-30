@@ -84,3 +84,30 @@ class AppointmentUpdateView(LoginRequiredMixin,UpdateView):
 
     def get_queryset(self):
         return Appointment.objects.filter(patient=self.request.user,status='pending')
+
+
+class DoctorAppointmentsView(LoginRequiredMixin,ListView):
+    model = Appointment
+    template_name = 'media2/doctor_appointments.html'
+    context_object_name = 'appointments'
+
+    def get_queryset(self):
+        doctor = get_object_or_404(Doctor,user=self.request.user)
+        return Appointment.objects.filter(doctor=doctor).order_by('-appointment_date')
+
+class AppointmentConfirmView(LoginRequiredMixin,View):
+    def post(self,request,pk):
+        doctor = get_object_or_404(Doctor,user=self.request.user)
+        appointment = get_object_or_404(Appointment,pk=pk,doctor=doctor)
+        appointment.status='confirmed'
+        appointment.save()
+        return redirect('appointments:doctor_appointments')
+
+class AppointmentCompleteView(LoginRequiredMixin,View):
+    def post(self,request,pk):
+        doctor = get_object_or_404(Doctor,user=self.request.user)
+        appointment = get_object_or_404(Appointment,pk=pk,doctor=doctor)
+        appointment.status='completed'
+        appointment.save()
+        return redirect('appointments:doctor_appointments')
+    
