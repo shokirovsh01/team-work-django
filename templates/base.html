@@ -87,8 +87,18 @@
                     </a>
 
                     <a href="{% url 'notifications:notification_list' %}" class="relative px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-regular fa-bell text-amber-400"></i>
+                        <div class="relative flex items-center">
+                            <i class="fa-regular fa-bell text-amber-400"></i>
+                            {% if unread_notifications_count > 0 %}
+                                <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                            {% endif %}
+                        </div>
                         <span>Уведомления</span>
+                        {% if unread_notifications_count > 0 %}
+                            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                {{ unread_notifications_count }}
+                            </span>
+                        {% endif %}
                     </a>
 
                     <a href="/clinic/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
