@@ -40,7 +40,7 @@ class RegisterViews(CreateView):
                      f'Click here to activate your account: {verification_url}'),
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[user.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         return HttpResponseRedirect(self.get_success_url())
 
