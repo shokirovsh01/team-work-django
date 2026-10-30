@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="space-y-6 max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold text-white">Статистика клиники</h1>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="text-xs text-slate-400">Всего записей</div>
+            <div class="text-2xl font-bold text-white">{{ total }}</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="text-xs text-slate-400">Ожидают / подтверждены</div>
+            <div class="text-2xl font-bold text-amber-300">{{ pending }} / {{ confirmed }}</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="text-xs text-slate-400">Завершены</div>
+            <div class="text-2xl font-bold text-emerald-300">{{ completed }}</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="text-xs text-slate-400">Отменены</div>
+            <div class="text-2xl font-bold text-red-300">{{ cancelled }}</div>
+        </div>
+    </div>
+
+    <p class="text-sm text-slate-400">Врачей: {{ doctors_total }}, активных: {{ doctors_active }}</p>
+
+    <div class="rounded-2xl bg-slate-900/90 border border-slate-800 p-4 overflow-x-auto">
+        <table class="w-full text-sm text-slate-200">
+            <thead class="text-slate-400 text-left">
+                <tr>
+                    <th class="p-2">Врач</th>
+                    <th class="p-2">Специализация</th>
+                    <th class="p-2">Записей</th>
+                    <th class="p-2">Завершено</th>
+                    <th class="p-2">Отменено</th>
+                    <th class="p-2">Отзывов</th>
+                    <th class="p-2">Оценка</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in doctors %}
+                <tr class="border-t border-slate-800">
+                    <td class="p-2">{{ d.user.get_full_name|default:d.user.username }}</td>
+                    <td class="p-2">{{ d.specialization.name|default:"—" }}</td>
+                    <td class="p-2">{{ d.total }}</td>
+                    <td class="p-2">{{ d.done }}</td>
+                    <td class="p-2">{{ d.cancelled }}</td>
+                    <td class="p-2">{{ d.reviews_count }}</td>
+                    <td class="p-2">{% if d.avg_rating %}{{ d.avg_rating|floatformat:1 }}/5{% else %}—{% endif %}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="p-4 text-center text-slate-500">Врачей нет.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
