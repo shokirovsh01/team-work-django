@@ -10,3 +10,5 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Уведомление для {self.recipient.username}"
+
+    
