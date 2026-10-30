@@ -194,9 +194,52 @@
                     На ближайшие дни свободных слотов нет.
                 </div>
             {% endif %}
+
         </div>
 
     </div>
 
 </div>
+    <!-- Отзывы пациентов -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-star text-amber-400"></i>
+            <span>Отзывы пациентов</span>
+        </h2>
+
+        {% for r in doctor.reviews.all %}
+            <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/70">
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold text-white text-sm">{{ r.patient.username }}</span>
+                    <span class="text-amber-300 font-bold text-sm">{{ r.rating }}/5</span>
+                </div>
+                {% if r.comment %}
+                    <p class="text-sm text-slate-300 mt-2">{{ r.comment }}</p>
+                {% endif %}
+                <div class="text-xs text-slate-500 mt-2">{{ r.created_at|date:"d.m.Y" }}</div>
+            {% if r.patient == user %}
+    <div class="flex gap-2 mt-3">
+        <a href="{% url 'review_edit' r.pk %}"
+           class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">
+            Редактировать
+        </a>
+        <form method="post" action="{% url 'review_delete' r.pk %}"
+              onsubmit="return confirm('Удалить отзыв?');">
+            {% csrf_token %}
+            <button type="submit"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/15 text-red-300 border border-red-500/30 hover:bg-red-500/25">
+                Удалить
+            </button>
+        </form>
+    </div>
+{% endif %}
+        {% empty %}
+            <div class="text-sm text-slate-500 py-4 text-center bg-slate-800/30 rounded-xl">
+                Отзывов пока нет.
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
 {% endblock %}
+
