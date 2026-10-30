@@ -162,7 +162,12 @@ def specialization_list(request):
         elif action == 'add_service':
             name = data.get('name', '').strip()
             description = data.get('description', '').strip()
-            price = data.get('price', 0)
+            try:
+                price = float(data.get('price', 0))
+                if price > 99999999:
+                    price = 99999999
+            except (ValueError, TypeError):
+                price = 0
             duration = data.get('duration', 30)
             spec_id = data.get('specialization_id')
             spec = Specialization.objects.filter(pk=spec_id).first()

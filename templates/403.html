@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Доступ запрещен — Ошибка 403 — MedClinic{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-16 text-center space-y-5">
+    <div class="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto text-3xl font-bold">
+        403
+    </div>
+    <h1 class="text-2xl font-bold text-white">Доступ ограничен</h1>
+    <p class="text-sm text-slate-400 leading-relaxed">
+        У вас нет прав для просмотра этой страницы или выполнения данного действия.
+    </p>
+    <div class="pt-4">
+        <a href="/" class="inline-flex items-center px-6 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Вернуться в каталог
+        </a>
+    </div>
+</div>
+{% endblock %}

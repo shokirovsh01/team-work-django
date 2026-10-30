@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}О клинике — MedClinic{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-5xl mx-auto">
+
+    <!-- Заголовок и карточка информации о клинике -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-teal-500/15 text-teal-300 border border-teal-500/30 mb-2">
+                    <i class="fa-solid fa-hospital"></i> Официальные сведения
+                </div>
+                <h1 class="text-3xl font-bold text-white">{{ clinic.name|default:"Медицинская клиника MedClinic" }}</h1>
+                <p class="text-slate-400 text-sm mt-1">Современная многопрофильная онлайн-поликлиника</p>
+            </div>
+
+            {% if user.is_superuser %}
+                <a href="{% url 'clinic_edit' %}" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 self-start sm:self-auto">
+                    <i class="fa-solid fa-pen-to-square text-teal-400"></i> Редактировать данные
+                </a>
+            {% endif %}
+        </div>
+
+        {% if clinic %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-1">
+                    <div class="text-xs text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-location-dot text-teal-400"></i> Адрес клиники:
+                    </div>
+                    <div class="font-semibold text-slate-200">{{ clinic.address|default:"г. Душанбе, ул. Рудаки 15" }}</div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-1">
+                    <div class="text-xs text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-phone text-emerald-400"></i> Контактный телефон:
+                    </div>
+                    <div class="font-semibold text-slate-200">{{ clinic.phone|default:"+992 44 600 00 00" }}</div>
+                </div>
+
+                {% if clinic.email %}
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-1">
+                        <div class="text-xs text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-envelope text-sky-400"></i> Email:
+                        </div>
+                        <div class="font-semibold text-slate-200">{{ clinic.email }}</div>
+                    </div>
+                {% endif %}
+
+                {% if clinic.working_hours %}
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-1">
+                        <div class="text-xs text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-regular fa-clock text-amber-400"></i> Режим работы:
+                        </div>
+                        <div class="font-semibold text-slate-200">{{ clinic.working_hours }}</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if clinic.description %}
+                <div class="pt-2">
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">О нашей клинике</h3>
+                    <p class="text-sm text-slate-300 leading-relaxed bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+                        {{ clinic.description }}
+                    </p>
+                </div>
+            {% endif %}
+        {% else %}
+            <p class="text-sm text-slate-400">Данные о клинике пока формируются.</p>
+        {% endif %}
+    </div>
+
+    <!-- Объявления и новости клиники -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-bullhorn text-teal-400"></i>
+                <span>Объявления и новости клиники</span>
+            </h2>
+
+            <div class="flex items-center gap-2">
+                {% if user.is_superuser %}
+                    <a href="{% url 'announcement_create' %}" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-500 hover:bg-teal-400 text-white transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus text-xs"></i> Добавить объявление
+                    </a>
+                {% endif %}
+                <a href="{% url 'announcement_list' %}" class="text-xs text-teal-400 hover:underline">
+                    Все объявления &rarr;
+                </a>
+            </div>
+        </div>
+
+        {% if announcements %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for a in announcements %}
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-white text-base">{{ a.title }}</h3>
+                            <span class="text-xs text-slate-400">{{ a.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">{{ a.content }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-sm text-slate-500 text-center py-4">Актуальных объявлений на сегодня нет.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

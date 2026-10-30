@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Страница не найдена — Ошибка 404 — MedClinic{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-16 text-center space-y-5">
+    <div class="w-20 h-20 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mx-auto text-3xl font-bold">
+        404
+    </div>
+    <h1 class="text-2xl font-bold text-white">Страница не найдена</h1>
+    <p class="text-sm text-slate-400 leading-relaxed">
+        Запрашиваемая страница перемещена или никогда не существовала.
+    </p>
+    <div class="pt-4">
+        <a href="/" class="inline-flex items-center px-6 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+            <i class="fa-solid fa-house mr-2"></i> Вернуться на главную
+        </a>
+    </div>
+</div>
+{% endblock %}
