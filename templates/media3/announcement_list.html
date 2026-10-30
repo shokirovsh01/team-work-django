@@ -1,0 +1,26 @@
+
+    {% extends 'base.html' %}
+
+{% block content %}
+<h2>Объявления</h2>
+
+{% if user.is_superuser %}
+    <a href="{% url 'announcement_create' %}">Добавить</a>
+{% endif %}
+
+{% for a in object_list %}
+    <h3>{{ a.title }}</h3>
+    <p>{{ a.content }}</p>
+    <small>{{ a.created_at|date:"d.m.Y H:i" }}</small>
+
+    {% if user.is_superuser %}
+        <a href="{% url 'announcement_edit' a.pk %}">Редактировать</a>
+        <form method="post" action="{% url 'announcement_delete' a.pk %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+        </form>
+    {% endif %}
+{% empty %}
+    <p>Объявлений нет.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Талон приёма №{{ appointment.pk }} — MedClinic{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Назад -->
+    <div>
+        <a href="{% url 'appointments:my_appointments' %}" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-teal-400"></i> Назад к моим приёмам
+        </a>
+    </div>
+
+    <!-- Карточка талона -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+        
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div>
+                <span class="text-xs uppercase tracking-wider text-slate-400 bg-slate-800 px-3 py-1 rounded-full font-semibold">
+                    Талон №{{ appointment.pk }}
+                </span>
+                <h1 class="text-xl sm:text-2xl font-bold text-white mt-2">Информация о записи на приём</h1>
+            </div>
+
+            <!-- Бейдж статуса -->
+            <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold
+                {% if appointment.status == 'cancelled' %}
+                    bg-red-500/10 text-red-400 border border-red-500/20
+                {% elif appointment.status == 'confirmed' or appointment.status == 'completed' %}
+                    bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+                {% else %}
+                    bg-amber-500/10 text-amber-400 border border-amber-500/20
+                {% endif %}">
+                {{ appointment.get_status_display }}
+            </span>
+        </div>
+
+        <!-- Данные врача и времени -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-slate-800/50 border border-slate-700/60 p-4 rounded-xl space-y-1">
+                <div class="text-xs text-slate-400">Лечащий врач:</div>
+                <div class="font-bold text-white text-base">
+                    {{ appointment.doctor.user.get_full_name|default:appointment.doctor.user.username }}
+                </div>
+                <div class="text-xs text-teal-300">
+                    {{ appointment.doctor.specialization.name|default:"Общая практика" }}
+                </div>
+                <div class="pt-2">
+                    <a href="{% url 'doctor_detail' appointment.doctor.pk %}" class="text-xs text-teal-400 hover:underline">
+                        Профиль врача &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/50 border border-slate-700/60 p-4 rounded-xl space-y-1">
+                <div class="text-xs text-slate-400">Дата и время приёма:</div>
+                <div class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-regular fa-clock text-teal-400"></i>
+                    <span>{{ appointment.appointment_date|date:"d.m.Y, H:i" }}</span>
+                </div>
+                <div class="text-xs text-slate-400 pt-1">
+                    Создан: {{ appointment.created_at|date:"d.m.Y H:i" }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Пациент (если смотрит врач или админ) -->
+        <div class="bg-slate-800/40 border border-slate-800 p-4 rounded-xl flex items-center justify-between text-sm">
+            <div>
+                <span class="text-xs text-slate-400 block">Пациент:</span>
+                <span class="font-semibold text-slate-200">{{ appointment.patient.get_full_name|default:appointment.patient.username }}</span>
+                <span class="text-xs text-slate-400 block mt-0.5">{{ appointment.patient.email }}</span>
+            </div>
+        </div>
+
+        <!-- Действия -->
+        <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <a href="{% url 'appointments:my_appointments' %}" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+                &larr; К списку приёмов
+            </a>
+
+            <div class="flex items-center gap-2">
+                {% if appointment.status != 'cancelled' and appointment.status != 'completed' %}
+                    <a href="{% url 'appointments:appointment_update' appointment.pk %}" 
+                       class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-days text-teal-400"></i>
+                        <span>Перенести запись</span>
+                    </a>
+
+                    <form action="{% url 'appointments:appointment_cancel' appointment.pk %}" method="post" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Отменить данную запись?')"
+                                class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-500 text-white shadow-md shadow-red-600/20 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-ban"></i>
+                            <span>Отменить</span>
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

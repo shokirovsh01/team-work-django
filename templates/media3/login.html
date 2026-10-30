@@ -1,20 +1,35 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-    <h2>Login</h2>
+{% block title %}Вход в аккаунт — MedClinic{% endblock %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
+{% block content %}
+<div class="max-w-md mx-auto py-6">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-5">
+        
+        <div class="text-center space-y-1">
+            <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mx-auto text-xl mb-3">
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-white">Вход в систему</h1>
+            <p class="text-xs text-slate-400">Войдите в личный кабинет пациента или врача</p>
+        </div>
 
-    <p>DOnt have account? <a href="{% url 'register' %}">Register</a></p>
+        <form method="post" class="space-y-4 [&_p]:space-y-1.5 [&_label]:block [&_label]:text-xs [&_label]:font-medium [&_label]:text-slate-300 [&_input]:w-full [&_input]:px-4 [&_input]:py-2.5 [&_input]:bg-slate-800 [&_input]:border [&_input]:border-slate-700 [&_input]:rounded-xl [&_input]:text-sm [&_input]:text-slate-100 [&_input]:focus:outline-none [&_input]:focus:border-teal-500">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-</body>
-</html>
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition mt-2">
+                Войти в аккаунт
+            </button>
+        </form>
+
+        <div class="pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
+            Ещё нет аккаунта? 
+            <a href="{% url 'register' %}" class="text-teal-400 hover:text-teal-300 font-medium ml-1">
+                Зарегистрироваться
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

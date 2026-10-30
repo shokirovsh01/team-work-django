@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Перенос приёма — MedClinic{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto space-y-6">
+
+    <!-- Назад -->
+    <div>
+        <a href="{% url 'appointments:my_appointments' %}" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-teal-400"></i> Назад к моим приёмам
+        </a>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-5">
+        
+        <!-- Заголовок -->
+        <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
+            <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 text-xl flex-shrink-0">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-white">Перенос записи на приём</h1>
+                <p class="text-xs text-slate-400 mt-0.5">
+                    Врач: <strong class="text-teal-300">{{ doctor.user.get_full_name|default:doctor.user.username }}</strong>
+                    {% if doctor.specialization %} ({{ doctor.specialization.name }}){% endif %}
+                </p>
+            </div>
+        </div>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">
+                    Новая дата и время приёма *
+                </label>
+                <input type="datetime-local" name="appointment_date" value="{{ form.appointment_date.value|date:'Y-m-d\TH:i' }}" required 
+                       class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500 transition">
+                {% if form.appointment_date.errors %}
+                    <p class="text-xs text-red-400 mt-1">{{ form.appointment_date.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="pt-4 flex items-center justify-end space-x-3 border-t border-slate-800">
+                <a href="{% url 'appointments:my_appointments' %}" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+                    Отмена
+                </a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+                    Сохранить новое время
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,19 +1,63 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Profile</title>
-</head>
-<body>
-    <h1>Profile</h1>
+{% extends 'base.html' %}
 
-    <p>Welcome, <strong>{{ user.username }}</strong>!</p>
-    <p>Email: {{ user.email }}</p>
-    <p>Phone: {{ user.phone}}</p>
-    <p>Date_birth: {{ user.date_of_birth}}</p>
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">logout</button>
-    </form>
-</body>
-</html>
+{% block title %}Личный профиль — MedClinic{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-6">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+        
+        <!-- Шапка профиля -->
+        <div class="flex items-center justify-between pb-5 border-b border-slate-800">
+            <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-teal-500/20">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white">{{ user.username }}</h1>
+                    <p class="text-xs text-slate-400">Профиль пользователя клиники</p>
+                </div>
+            </div>
+
+            <a href="{% url 'profile_edit' %}" class="px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-pen-to-square text-teal-400"></i>
+                <span>Изменить</span>
+            </a>
+        </div>
+
+        <!-- Данные профиля -->
+        <div class="space-y-3 text-sm">
+            <div class="flex justify-between items-center p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                <span class="text-xs text-slate-400">Электронная почта:</span>
+                <span class="font-medium text-slate-200">{{ user.email|default:"Не указана" }}</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                <span class="text-xs text-slate-400">Номер телефона:</span>
+                <span class="font-medium text-slate-200">{{ user.phone|default:"Не указан" }}</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                <span class="text-xs text-slate-400">Дата рождения:</span>
+                <span class="font-medium text-slate-200">{{ user.date_of_birth|default:"Не указана" }}</span>
+            </div>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+            <a href="{% url 'appointments:my_appointments' %}" class="text-xs text-teal-400 hover:underline flex items-center gap-1.5">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>Мои записи на приём</span>
+            </a>
+
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 rounded-xl text-xs font-medium text-red-400 hover:text-white bg-red-500/10 hover:bg-red-600 border border-red-500/20 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Выйти</span>
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

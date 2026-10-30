@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Журнал приёмов врача — MedClinic{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Заголовок -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-stethoscope text-teal-400"></i>
+                <span>Журнал записей пациентов</span>
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">Управление приёмами, подтверждение и завершение консультаций</p>
+        </div>
+        <a href="/doctors/" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-medium text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+            &larr; К списку врачей
+        </a>
+    </div>
+
+    <!-- Список записей к врачу -->
+    {% if appointments %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for app in appointments %}
+                <div class="bg-slate-900/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-400 bg-slate-800 px-3 py-1 rounded-full">
+                                Талон №{{ app.pk }}
+                            </span>
+                            
+                            <span class="px-3 py-1 rounded-full text-xs font-medium 
+                                {% if app.status == 'cancelled' %}
+                                    bg-red-500/10 text-red-400 border border-red-500/20
+                                {% elif app.status == 'confirmed' %}
+                                    bg-sky-500/10 text-sky-400 border border-sky-500/20
+                                {% elif app.status == 'completed' %}
+                                    bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+                                {% else %}
+                                    bg-amber-500/10 text-amber-400 border border-amber-500/20
+                                {% endif %}">
+                                {{ app.get_status_display }}
+                            </span>
+                        </div>
+
+                        <!-- Пациент -->
+                        <div>
+                            <div class="text-xs text-slate-400">Пациент:</div>
+                            <div class="font-bold text-white text-base mt-0.5">
+                                {{ app.patient.get_full_name|default:app.patient.username }}
+                            </div>
+                            <div class="text-xs text-slate-400">{{ app.patient.email }}</div>
+                        </div>
+
+                        <!-- Врач (если смотрит админ) -->
+                        {% if user.is_staff and not user.doctor_profile %}
+                            <div class="text-xs text-teal-300">
+                                Врач: {{ app.doctor.user.get_full_name|default:app.doctor.user.username }}
+                            </div>
+                        {% endif %}
+
+                        <div class="flex items-center text-slate-200 text-sm font-medium space-x-2 pt-1 border-t border-slate-800">
+                            <i class="fa-regular fa-clock text-teal-400"></i>
+                            <span>{{ app.appointment_date|date:"d.m.Y H:i" }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки управления статусом врача -->
+                    <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+                        {% if app.status == 'pending' %}
+                            <form action="{% url 'appointments:appointment_confirm' app.pk %}" method="post" class="m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-600 hover:bg-sky-500 text-white transition flex items-center gap-1">
+                                    <i class="fa-solid fa-check"></i> Подтвердить
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if app.status == 'confirmed' %}
+                            <form action="{% url 'appointments:appointment_complete' app.pk %}" method="post" class="m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> Завершить приём
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-12 text-center">
+            <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
+                <i class="fa-solid fa-user-clock text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-200">Записей пока нет</h3>
+            <p class="text-slate-400 text-sm mt-1">Когда пациенты запишутся на приём, они появятся в этом списке.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

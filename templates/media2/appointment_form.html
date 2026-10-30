@@ -3,27 +3,72 @@
 {% block title %}Запись на приём — MedClinic{% endblock %}
 
 {% block content %}
-<div class="max-w-xl mx-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-        <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-800">
-            <div class="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-                <i class="fa-solid fa-calendar-plus text-lg"></i>
+<div class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Назад -->
+    <div>
+        <a href="/doctors/{{ doctor.pk }}/" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-arrow-left mr-2 text-teal-400"></i> Назад к врачу
+        </a>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+        
+        <!-- Заголовок и карточка врача -->
+        <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
+            <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 text-xl flex-shrink-0">
+                <i class="fa-solid fa-calendar-plus"></i>
             </div>
             <div>
-                <h1 class="text-xl font-bold text-white">Записаться на приём</h1>
-                <p class="text-xs text-slate-400">Выберите удобную дату и время для визита</p>
+                <h1 class="text-xl font-bold text-white">Запись на приём</h1>
+                <p class="text-xs text-slate-400 mt-0.5">
+                    Врач: <strong class="text-teal-300">{{ doctor.user.get_full_name|default:doctor.user.username }}</strong>
+                    {% if doctor.specialization %} ({{ doctor.specialization.name }}){% endif %}
+                </p>
             </div>
         </div>
 
-        <form method="post" class="space-y-5 [&_p]:space-y-2 [&_label]:block [&_label]:text-sm [&_label]:font-medium [&_label]:text-slate-300 [&_input]:w-full [&_input]:bg-slate-950 [&_input]:border [&_input]:border-slate-700 [&_input]:rounded-xl [&_input]:px-4 [&_input]:py-2.5 [&_input]:text-white [&_input]:focus:outline-none [&_input]:focus:border-teal-500">
-            {% csrf_token %}
-            {{ form.as_p }}
+        <!-- Быстрый выбор свободного слота (окошка) -->
+        {% if slots %}
+            <div class="space-y-3">
+                <div class="text-xs font-semibold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                    <i class="fa-regular fa-clock"></i>
+                    <span>Выберите свободное окошко для быстрой вставки:</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {% for slot in slots %}
+                        <button type="button" 
+                                onclick="document.getElementById('appointment-date-input').value = '{{ slot.date|date:"Y-m-d" }}T{{ slot.start_time|time:"H:i" }}';"
+                                class="p-2.5 rounded-xl text-left bg-emerald-950/40 border border-emerald-800/60 hover:border-emerald-500 hover:bg-emerald-950/70 transition">
+                            <div class="text-[11px] text-emerald-300 font-semibold">{{ slot.date|date:"d.m (D)" }}</div>
+                            <div class="text-sm font-bold text-white mt-0.5">{{ slot.start_time|time:"H:i" }} — {{ slot.end_time|time:"H:i" }}</div>
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
 
-            <div class="pt-4 flex items-center justify-end space-x-3">
-                <a href="{% url 'appointments:my_appointments' %}" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">
+                    Выбранные дата и время приёма *
+                </label>
+                <input type="datetime-local" name="appointment_date" id="appointment-date-input" required 
+                       class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-teal-500 transition">
+                {% if form.appointment_date.errors %}
+                    <p class="text-xs text-red-400 mt-1">{{ form.appointment_date.errors.0 }}</p>
+                {% else %}
+                    <p class="text-[11px] text-slate-500 mt-1">Кликните по окошку выше или выберите вручную</p>
+                {% endif %}
+            </div>
+
+            <div class="pt-4 flex items-center justify-end space-x-3 border-t border-slate-800">
+                <a href="/doctors/{{ doctor.pk }}/" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
                     Отмена
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
                     Подтвердить запись
                 </button>
             </div>

@@ -40,12 +40,6 @@ class PatientListView(StaffRequiredMixin, ListView):
     queryset = PatientProfile.objects.select_related('user')
 
 
-class AnnouncementListView(ListView):
-    template_name = 'media3/announcement_list.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return ClinicAnnouncement.objects.filter(is_published=True)
 
 class AnnouncementCreateView(ClinicAdminRequiredMixin, CreateView):
     form_class = AnnouncementForm
@@ -57,8 +51,25 @@ class AnnouncementCreateView(ClinicAdminRequiredMixin, CreateView):
         form.instance.clinic = Clinic.objects.first()
         return super().form_valid(form)
 
+
+class AnnouncementUpdateView(ClinicAdminRequiredMixin, UpdateView):
+    model = ClinicAnnouncement
+    form_class = AnnouncementForm
+    template_name = 'media3/announcement_form.html'
+    success_url = reverse_lazy('announcement_list')
+    
+    
+class AnnouncementListView(ListView):
+    template_name = 'media3/announcement_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return ClinicAnnouncement.objects.filter(is_published=True)
+
+    
 class AnnouncementDeleteView(ClinicAdminRequiredMixin, View):
     def post(self, request, pk):
         get_object_or_404(ClinicAnnouncement, pk=pk).delete()
         messages.success(request, 'Deleted!!!')
         return redirect('announcement_list')
+
