@@ -34,7 +34,7 @@ def doctor_detail(request, pk):
     today = datetime.now().date()
     slots = doctor.slots.filter(date__gte=today, status='free').order_by('date', 'start_time')[:15]
     days_off = doctor.days_off.filter(date__gte=today).order_by('date')
-    is_owner = hasattr(request.user, 'doctor_profile') and request.user.doctor_profile == doctor
+    is_owner = request.user.is_authenticated and doctor.user == request.user
     can_edit = request.user.is_staff or is_owner
     return render(request, 'doctors/doctor_detail.html', {
         'doctor': doctor,
@@ -103,7 +103,7 @@ def doctor_create(request):
 
 def doctor_edit(request, pk):
     doctor = get_object_or_404(Doctor, pk=pk)
-    is_owner = hasattr(request.user, 'doctor_profile') and request.user.doctor_profile == doctor
+    is_owner = request.user.is_authenticated and doctor.user == request.user
     if not (request.user.is_staff or is_owner):
         return HttpResponse('<h1>Доступ запрещен</h1>', status=403)
 

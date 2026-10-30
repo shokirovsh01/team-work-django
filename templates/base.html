@@ -101,6 +101,17 @@
                         <span>Объявления</span>
                     </a>
 
+                    {% if user.doctor_profile %}
+                        <a href="{% url 'appointments:doctor_appointments' %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-teal-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                            <i class="fa-solid fa-stethoscope text-teal-400"></i>
+                            <span>Журнал врача</span>
+                        </a>
+                        <a href="{% url 'doctor_schedule' user.doctor_profile.pk %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-teal-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                            <i class="fa-regular fa-calendar-days text-teal-400"></i>
+                            <span>Мой график</span>
+                        </a>
+                    {% endif %}
+
                     {% if user.is_staff %}
                         <a href="/reviews/stats/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
                             <i class="fa-solid fa-chart-line text-purple-400"></i>
@@ -124,7 +135,18 @@
                                 <span class="text-sm font-medium text-slate-200">{{ user.username }}</span>
                             </a>
                             
-                            {% if user.is_staff %}
+                            {% if user.doctor_profile %}
+                        <a href="{% url 'appointments:doctor_appointments' %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-teal-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                            <i class="fa-solid fa-stethoscope text-teal-400"></i>
+                            <span>Журнал врача</span>
+                        </a>
+                        <a href="{% url 'doctor_schedule' user.doctor_profile.pk %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-teal-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                            <i class="fa-regular fa-calendar-days text-teal-400"></i>
+                            <span>Мой график</span>
+                        </a>
+                    {% endif %}
+
+                    {% if user.is_staff %}
                                 <a href="/admin/" class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full hover:bg-indigo-500/30 transition" title="Админ-панель">
                                     Admin
                                 </a>

@@ -42,6 +42,31 @@
             </div>
         </div>
 
+        {% if user.doctor_profile %}
+            <!-- Рабочий кабинет врача -->
+            <div class="p-4 rounded-xl bg-teal-500/10 border border-teal-500/20 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-teal-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-stethoscope"></i> Кабинет врача
+                    </span>
+                    <span class="text-xs text-slate-400">{{ user.doctor_profile.specialization.name|default:"Специалист клиники" }}</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <a href="{% url 'appointments:doctor_appointments' %}" class="px-3 py-2 rounded-lg text-xs font-semibold bg-teal-600 hover:bg-teal-500 text-white transition flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-clipboard-user"></i> Журнал записей
+                    </a>
+                    <a href="{% url 'doctor_schedule' user.doctor_profile.pk %}" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center gap-1.5">
+                        <i class="fa-regular fa-calendar-days text-teal-400"></i> Мой график
+                    </a>
+                </div>
+                <div class="pt-1 text-center">
+                    <a href="{% url 'doctor_detail' user.doctor_profile.pk %}" class="text-xs text-teal-400 hover:underline">
+                        Перейти к публичной карточке врача &rarr;
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
         <!-- Кнопки действий -->
         <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
             <a href="{% url 'appointments:my_appointments' %}" class="text-xs text-teal-400 hover:underline flex items-center gap-1.5">
