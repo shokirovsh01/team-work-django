@@ -11,8 +11,9 @@ urlpatterns = [
     path('doctors/',include('doctors.urls')),
     path('schedules/',include('schedules.urls')),
     path('', include('accountsapp.urls')),
-    path('clinicapp/', include('clinicapp.urls')),
+    path('', include('clinicapp.urls')),
     path('reviewsapp/', include('reviewsapp.urls')),
+    
 
 ]
 

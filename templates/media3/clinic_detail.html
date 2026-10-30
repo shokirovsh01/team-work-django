@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>About Clinic</title></head>
+<body>
+    {% if clinic %}
+        <h1>{{ clinic.name }}</h1>
+        <p>{{ clinic.description }}</p>
+        <p>Адрес: {{ clinic.address }}</p>
+        <p>Телефон: {{ clinic.phone }}</p>
+        <p>Email: {{ clinic.email }}</p>
+        <p>Часы работы: {{ clinic.working_hours }}</p>
+    {% else %}
+        <p>Данные о клинике ещё не добавлены.</p>
+    {% endif %}
+
+    {% if perms.auth.change_user or user.is_superuser or 'Admin' in user_groups %}{% endif %}
+    {% if user.is_superuser %}<p><a href="{% url 'clinic_edit' %}">Изменить данные</a></p>{% endif %}
+
+    <h2>Объявления</h2>
+    {% for a in announcements %}
+        <h3>{{ a.title }}</h3>
+        <p>{{ a.content  }}</p>
+        <small>{{ a.created_at|date:"d.m.Y" }}</small>
+    {% empty %}
+        <p>Объявлений нет.</p>
+    {% endfor %}
+    <!-- <p><a href="{% url 'announcement_list' %}">Все объявления</a></p> -->
+</body>
+</html>

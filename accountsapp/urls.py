@@ -10,5 +10,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('profile_edit/', ProfileEditView.as_view(), name='profile_edit'),
     path('activate/<str:uidb64>/<str:token>/', activate, name='activate'),
-    path('email-sent/', TemplateView.as_view(template_name='media3/email_sent.html'), name='email_send'),
+    path('email-sent/', TemplateView.as_view(template_name='media3/email_sent.html'), name='email_sent'),
 ]

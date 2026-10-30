@@ -21,7 +21,7 @@ User = get_user_model()
 class RegisterViews(CreateView):
     form_class = PatientRegistrationForm
     template_name = 'media3/register.html'
-    success_url = reverse_lazy('email_send')
+    success_url = reverse_lazy('email_sent')
 
     def form_valid(self, form):
         user = form.save(commit=False)
