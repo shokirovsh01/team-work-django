@@ -11,6 +11,8 @@ class NotificationListView(LoginRequiredMixin,ListView):
     def get_queryset(self):
         return Notification.objects.filter(recipient=self.request.user)
 
+
+
 class NotificationReadView(LoginRequiredMixin,View):
     def post(self, request, pk):
         notification = get_object_or_404(Notification,pk=pk,recipient=request.user)
