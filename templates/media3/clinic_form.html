@@ -1,42 +1,54 @@
 {% extends 'base.html' %}
 
-{% block title %}Редактирование сведений о клинике — MedClinic{% endblock %}
+{% block title %}Редактирование данных клиники — MedClinic{% endblock %}
 
 {% block content %}
-<div class="max-w-xl mx-auto space-y-6">
-
-    <!-- Назад -->
-    <div>
-        <a href="{% url 'clinic_detail' %}" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition">
-            <i class="fa-solid fa-arrow-left mr-2 text-teal-400"></i> Назад к странице клиники
-        </a>
-    </div>
-
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-5">
-        
+<div class="max-w-2xl mx-auto">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6">
         <div>
-            <h1 class="text-xl font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-hospital text-teal-400"></i>
-                <span>Редактирование данных клиники</span>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-hospital-user text-teal-400"></i>
+                <span>Редактирование клиники</span>
             </h1>
-            <p class="text-xs text-slate-400 mt-1">Обновите адрес, телефон, описание и часы приёма</p>
+            <p class="text-slate-400 text-sm mt-1">Обновите общую контактную информацию и описание учреждения</p>
         </div>
 
-        <form method="post" class="space-y-4 [&_p]:space-y-1.5 [&_label]:block [&_label]:text-xs [&_label]:font-medium [&_label]:text-slate-300 [&_input]:w-full [&_input]:px-4 [&_input]:py-2.5 [&_input]:bg-slate-800 [&_input]:border [&_input]:border-slate-700 [&_input]:rounded-xl [&_input]:text-sm [&_input]:text-slate-100 [&_input]:focus:outline-none [&_input]:focus:border-teal-500 [&_textarea]:w-full [&_textarea]:px-4 [&_textarea]:py-2.5 [&_textarea]:bg-slate-800 [&_textarea]:border [&_textarea]:border-slate-700 [&_textarea]:rounded-xl [&_textarea]:text-sm [&_textarea]:text-slate-100">
+        <form method="post" class="space-y-4">
             {% csrf_token %}
-            {{ form.as_p }}
+            
+            {% for field in form %}
+                <div class="space-y-1.5">
+                    <label class="block text-sm font-medium text-slate-300">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="text-teal-400">*</span>{% endif %}
+                    </label>
+                    <div class="relative">
+                        {{ field }}
+                    </div>
+                    {% if field.help_text %}
+                        <p class="text-xs text-slate-500">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="text-xs text-red-400">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
-            <div class="pt-4 flex items-center justify-end space-x-3 border-t border-slate-800">
-                <a href="{% url 'clinic_detail' %}" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <a href="{% url 'clinic_detail' %}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
                     Отмена
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
                     Сохранить изменения
                 </button>
             </div>
         </form>
-
     </div>
-
 </div>
+
+<script>
+    document.querySelectorAll('input:not([type=checkbox]), textarea, select').forEach(el => {
+        el.className = 'w-full bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition text-sm';
+    });
+</script>
 {% endblock %}

@@ -5,7 +5,7 @@
 {% block content %}
 <div class="space-y-6 max-w-5xl mx-auto">
 
-    <!-- Навигация назад и кнопки управления -->
+    
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <a href="/doctors/" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition">
             <i class="fa-solid fa-arrow-left mr-2 text-teal-400"></i> Назад в каталог врачей
@@ -34,10 +34,10 @@
         </div>
     </div>
 
-    <!-- Основная карточка-визитка врача -->
+    
     <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-8 items-start">
         
-        <!-- Фото доктора -->
+        
         <div class="w-full md:w-56 h-72 rounded-2xl overflow-hidden bg-slate-800 border border-slate-700 flex-shrink-0 flex items-center justify-center shadow-lg">
             {% if doctor.photo %}
                 <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" class="w-full h-full object-cover object-top">
@@ -48,7 +48,7 @@
             {% endif %}
         </div>
 
-        <!-- Данные доктора -->
+        
         <div class="flex-1 space-y-4">
             <div>
                 <div class="flex items-center justify-between gap-3 mb-2">
@@ -75,7 +75,7 @@
                 </h1>
             </div>
 
-            <!-- Характеристики -->
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div class="bg-slate-800/60 border border-slate-700/60 p-3 rounded-xl flex items-center gap-3">
                     <div class="w-9 h-9 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center">
@@ -98,7 +98,7 @@
                 </div>
             </div>
 
-            <!-- Биография -->
+            
             {% if doctor.bio %}
                 <div class="pt-2">
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">О специалисте</h3>
@@ -110,7 +110,7 @@
         </div>
     </div>
 
-    <!-- Услуги и цены врача -->
+    
     <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-notes-medical text-teal-400"></i>
@@ -144,10 +144,10 @@
         {% endif %}
     </div>
 
-    <!-- Регулярное расписание и свободные слоты -->
+    
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <!-- Еженедельный график -->
+        
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
                 <i class="fa-regular fa-calendar text-sky-400"></i>
@@ -170,7 +170,7 @@
             {% endif %}
         </div>
 
-        <!-- Ближайшие свободные слоты для записи -->
+        
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2">

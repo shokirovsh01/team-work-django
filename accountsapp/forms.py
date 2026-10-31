@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import PatientProfile
 
-
 class PatientRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=200, required=True)
     last_name = forms.CharField(max_length=30, required=True)
@@ -23,7 +22,6 @@ class PatientRegistrationForm(UserCreationForm):
             user.save()
             PatientProfile.objects.get_or_create(user=user)
         return user
-
 
 class PatientProfileForm(forms.ModelForm):
     class Meta:

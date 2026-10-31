@@ -5,7 +5,7 @@
 {% block content %}
 <div class="space-y-6">
 
-    <!-- Заголовок страницы -->
+    
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
         <div>
             <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
@@ -22,7 +22,7 @@
         {% endif %}
     </div>
 
-    <!-- Список специализаций и услуг внутри -->
+    
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {% for spec in specializations %}
             <div class="bg-slate-900/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-6 shadow-md transition flex flex-col justify-between space-y-4">
@@ -43,7 +43,7 @@
                         </p>
                     {% endif %}
 
-                    <!-- Услуги направления -->
+                    
                     <div class="space-y-2 pt-2 border-t border-slate-800">
                         <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Услуги направления:</div>
                         {% if spec.services.all %}
@@ -67,11 +67,11 @@
         {% endfor %}
     </div>
 
-    <!-- Формы администратора (только для staff) -->
+    
     {% if user.is_staff %}
         <div id="adminForms" class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
             
-            <!-- Форма добавления специализации -->
+            
             <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-plus text-sky-400 text-sm"></i>
@@ -100,7 +100,7 @@
                 </form>
             </div>
 
-            <!-- Форма добавления услуги -->
+            
             <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-plus text-teal-400 text-sm"></i>

@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MedClinic — Система записи к врачам{% endblock %}</title>
     
-    <!-- Подключение Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Подключение шрифта Inter и иконок FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -29,7 +26,6 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Стилизация полосы прокрутки */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -47,188 +43,192 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col md:flex-row selection:bg-teal-500 selection:text-white">
 
-    <!-- Верхняя навигационная панель (Navbar) -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-800/80 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                
-                <!-- Логотип -->
-                <div class="flex items-center space-x-3">
-                    <a href="/" class="flex items-center space-x-3 group">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform duration-200">
-                            <i class="fa-solid fa-staff-snake text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <span class="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-teal-400 bg-clip-text text-transparent">
-                                MedClinic
-                            </span>
-                            <span class="block text-[10px] text-slate-400 uppercase tracking-widest -mt-1">Онлайн-поликлиника</span>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Навигационные ссылки (Десктоп) -->
-                <nav class="hidden md:flex items-center space-x-1">
-                    <a href="/doctors/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-solid fa-user-doctor text-teal-400"></i>
-                        <span>Врачи</span>
-                    </a>
-
-                    <a href="/doctors/specializations/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-solid fa-stethoscope text-sky-400"></i>
-                        <span>Специализации</span>
-                    </a>
-
-                    <a href="{% url 'appointments:my_appointments' %}" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-regular fa-calendar-check text-emerald-400"></i>
-                        <span>Мои приёмы</span>
-                    </a>
-
-                    <a href="{% url 'notifications:notification_list' %}" class="relative px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-regular fa-bell text-amber-400"></i>
-                        <span>Уведомления</span>
-                    </a>
-
-                    <a href="/clinic/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-solid fa-hospital text-teal-400"></i>
-                        <span>О клинике</span>
-                    </a>
-
-                    <a href="/clinic/announcements/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                        <i class="fa-solid fa-bullhorn text-amber-400"></i>
-                        <span>Объявления</span>
-                    </a>
-
-                    {% if user.is_staff %}
-                        <a href="/reviews/stats/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                            <i class="fa-solid fa-chart-line text-purple-400"></i>
-                            <span>Статистика</span>
-                        </a>
-                        <a href="/clinic/patients/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
-                            <i class="fa-solid fa-users text-sky-400"></i>
-                            <span>Пациенты</span>
-                        </a>
-                    {% endif %}
-                </nav>
-
-                <!-- Правый блок: Профиль / Авторизация -->
-                <div class="hidden md:flex items-center space-x-4">
-                    {% if user.is_authenticated %}
-                        <div class="flex items-center space-x-2 bg-slate-800/70 border border-slate-700/60 rounded-full py-1.5 px-3">
-                            <a href="{% url 'profile' %}" class="flex items-center space-x-2 hover:opacity-80 transition">
-                                <div class="w-7 h-7 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-300 font-semibold text-xs">
-                                    {{ user.username|slice:":1"|upper }}
-                                </div>
-                                <span class="text-sm font-medium text-slate-200">{{ user.username }}</span>
-                            </a>
-                            
-                            {% if user.is_staff %}
-                                <a href="/admin/" class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full hover:bg-indigo-500/30 transition" title="Админ-панель">
-                                    Admin
-                                </a>
-                            {% endif %}
-                            
-                            <a href="{% url 'logout' %}" class="text-slate-400 hover:text-red-400 pl-1 text-sm" title="Выйти">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="flex items-center space-x-2">
-                            <a href="{% url 'login' %}" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
-                                Войти
-                            </a>
-                            <a href="{% url 'register' %}" class="px-3.5 py-1.5 rounded-xl text-sm font-medium bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/20 hover:from-teal-400 hover:to-emerald-500 transition">
-                                Регистрация
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <!-- Кнопка мобильного меню -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none p-2 rounded-lg bg-slate-800/50 border border-slate-700">
-                        <i class="fa-solid fa-bars text-lg"></i>
-                    </button>
-                </div>
+    <header class="md:hidden sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between shadow-lg">
+        <a href="/" class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/20">
+                <i class="fa-solid fa-staff-snake text-white text-base"></i>
             </div>
-        </div>
-
-        <!-- Мобильное выпадающее меню -->
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
-            <a href="/doctors/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-solid fa-user-doctor text-teal-400 mr-2"></i> Врачи
-            </a>
-            <a href="/doctors/specializations/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-solid fa-stethoscope text-sky-400 mr-2"></i> Специализации
-            </a>
-            <a href="{% url 'appointments:my_appointments' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-regular fa-calendar-check text-emerald-400 mr-2"></i> Мои приёмы
-            </a>
-            <a href="{% url 'notifications:notification_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-regular fa-bell text-amber-400 mr-2"></i> Уведомления
-            </a>
-            <a href="/clinic/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-solid fa-hospital text-teal-400 mr-2"></i> О клинике
-            </a>
-            <a href="/clinic/announcements/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                <i class="fa-solid fa-bullhorn text-amber-400 mr-2"></i> Объявления
-            </a>
-            {% if user.is_staff %}
-                <a href="/reviews/stats/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                    <i class="fa-solid fa-chart-line text-purple-400 mr-2"></i> Статистика клиники
-                </a>
-                <a href="/clinic/patients/" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800">
-                    <i class="fa-solid fa-users text-sky-400 mr-2"></i> Реестр пациентов
-                </a>
-            {% endif %}
-            <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                {% if user.is_authenticated %}
-                    <span class="text-sm text-slate-400">Вы вошли как: <strong class="text-white">{{ user.username }}</strong></span>
-                {% else %}
-                    <a href="/admin/login/" class="text-sm text-teal-400 font-medium">Войти в аккаунт</a>
-                {% endif %}
+            <div>
+                <span class="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-teal-400 bg-clip-text text-transparent">MedClinic</span>
+                <span class="block text-[9px] text-slate-400 uppercase tracking-widest -mt-1">Поликлиника</span>
             </div>
-        </div>
+        </a>
+        <button id="mobile-menu-btn" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-slate-700 focus:outline-none">
+            <i class="fa-solid fa-bars text-base"></i>
+        </button>
     </header>
 
-    <!-- Блок системных уведомлений Django (Messages) -->
-    {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
-            {% for message in messages %}
-                <div class="flex items-center justify-between p-4 mb-3 rounded-xl border {% if message.tags == 'error' %}bg-red-950/60 border-red-800 text-red-200{% elif message.tags == 'success' %}bg-emerald-950/60 border-emerald-800 text-emerald-200{% else %}bg-slate-900 border-slate-700 text-slate-200{% endif %} shadow-md">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-red-400{% elif message.tags == 'success' %}fa-circle-check text-emerald-400{% else %}fa-circle-info text-teal-400{% endif %} text-lg"></i>
-                        <span class="text-sm font-medium">{{ message }}</span>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+    <aside id="sidebar" class="fixed md:sticky top-0 left-0 bottom-0 z-50 w-64 h-screen bg-slate-900/95 border-r border-slate-800/80 flex flex-col justify-between shrink-0 transition-transform duration-300 -translate-x-full md:translate-x-0 overflow-y-auto">
+        <div class="p-5 space-y-6">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform duration-200">
+                        <i class="fa-solid fa-staff-snake text-white text-xl"></i>
                     </div>
-                    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-teal-400 bg-clip-text text-transparent">
+                            MedClinic
+                        </span>
+                        <span class="block text-[10px] text-slate-400 uppercase tracking-widest -mt-0.5">Онлайн-поликлиника</span>
+                    </div>
+                </a>
+                <button id="close-sidebar-btn" class="md:hidden text-slate-400 hover:text-white p-1 focus:outline-none">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <nav class="space-y-1">
+                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-3 pb-1">Главное меню</div>
+                <a href="/doctors/" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                    <i class="fa-solid fa-user-doctor text-teal-400 w-5"></i>
+                    <span>Врачи</span>
+                </a>
+                <a href="/doctors/specializations/" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                    <i class="fa-solid fa-stethoscope text-sky-400 w-5"></i>
+                    <span>Специализации</span>
+                </a>
+                <a href="{% url 'appointments:my_appointments' %}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                    <i class="fa-regular fa-calendar-check text-emerald-400 w-5"></i>
+                    <span>Мои приёмы</span>
+                </a>
+                <a href="{% url 'notifications:notification_list' %}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-regular fa-bell text-amber-400 w-5"></i>
+                        <span>Уведомления</span>
+                    </div>
+                    {% if unread_notifications_count > 0 %}
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            {{ unread_notifications_count }}
+                        </span>
+                    {% endif %}
+                </a>
+                <a href="/clinic/" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                    <i class="fa-solid fa-hospital text-teal-400 w-5"></i>
+                    <span>О клинике</span>
+                </a>
+                <a href="/clinic/announcements/" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                    <i class="fa-solid fa-bullhorn text-amber-400 w-5"></i>
+                    <span>Объявления</span>
+                </a>
+
+                {% if user.doctor_profile %}
+                    <div class="pt-4 mt-2 border-t border-slate-800/60">
+                        <div class="text-[11px] font-semibold text-teal-400 uppercase tracking-wider px-3 pb-1">Кабинет врача</div>
+                        <a href="{% url 'appointments:doctor_appointments' %}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-teal-300 hover:text-white hover:bg-teal-500/10 transition">
+                            <i class="fa-solid fa-clipboard-user text-teal-400 w-5"></i>
+                            <span>Журнал приёмов</span>
+                        </a>
+                        <a href="{% url 'doctor_schedule' user.doctor_profile.pk %}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-teal-300 hover:text-white hover:bg-teal-500/10 transition">
+                            <i class="fa-regular fa-calendar-days text-teal-400 w-5"></i>
+                            <span>Мой график</span>
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if user.is_staff %}
+                    <div class="pt-4 mt-2 border-t border-slate-800/60">
+                        <div class="text-[11px] font-semibold text-purple-400 uppercase tracking-wider px-3 pb-1">Управление</div>
+                        <a href="/reviews/stats/" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                            <i class="fa-solid fa-chart-line text-purple-400 w-5"></i>
+                            <span>Статистика</span>
+                        </a>
+                        <a href="/clinic/patients/" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+                            <i class="fa-solid fa-users text-sky-400 w-5"></i>
+                            <span>Пациенты</span>
+                        </a>
+                        <a href="/admin/" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-indigo-300 hover:text-white hover:bg-indigo-500/10 transition">
+                            <i class="fa-solid fa-shield-halved text-indigo-400 w-5"></i>
+                            <span>Django Admin</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-slate-800 bg-slate-900/60">
+            {% if user.is_authenticated %}
+                <div class="space-y-3">
+                    <a href="{% url 'profile' %}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-800/80 transition group">
+                        <div class="w-9 h-9 rounded-xl bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-300 font-bold text-sm shrink-0">
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="text-sm font-semibold text-white truncate group-hover:text-teal-300 transition">{{ user.username }}</div>
+                            <div class="text-[11px] text-slate-400 truncate">
+                                {% if user.is_superuser %}Администратор{% elif user.doctor_profile %}Врач клиники{% else %}Пациент{% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    <div class="flex items-center justify-between pt-1 px-1 text-xs">
+                        <a href="{% url 'profile' %}" class="text-slate-400 hover:text-white transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-gear"></i>
+                            <span>Профиль</span>
+                        </a>
+                        <a href="{% url 'logout' %}" class="text-red-400 hover:text-red-300 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span>Выйти</span>
+                        </a>
+                    </div>
                 </div>
-            {% endfor %}
+            {% else %}
+                <div class="space-y-2">
+                    <a href="{% url 'login' %}" class="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                        Войти в аккаунт
+                    </a>
+                    <a href="{% url 'register' %}" class="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/20 hover:from-teal-400 transition">
+                        Регистрация
+                    </a>
+                </div>
+            {% endif %}
         </div>
-    {% endif %}
+    </aside>
 
-    <!-- Основной контент страницы -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {% block content %}{% endblock %}
-    </main>
+    <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+                {% for message in messages %}
+                    <div class="flex items-center justify-between p-4 mb-3 rounded-xl border {% if message.tags == 'error' %}bg-red-950/60 border-red-800 text-red-200{% elif message.tags == 'success' %}bg-emerald-950/60 border-emerald-800 text-emerald-200{% else %}bg-slate-900 border-slate-700 text-slate-200{% endif %} shadow-md">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-red-400{% elif message.tags == 'success' %}fa-circle-check text-emerald-400{% else %}fa-circle-info text-teal-400{% endif %} text-lg"></i>
+                            <span class="text-sm font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    <!-- Подвал -->
-    <footer class="border-t border-slate-800/80 bg-slate-900/60">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-slate-500">
-            &copy; 2026 MedClinic — Система записи к врачам
-        </div>
-    </footer>
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="border-t border-slate-800/80 bg-slate-900/60 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-center text-xs text-slate-500">
+                &copy; 2026 MedClinic — Система записи к врачам
+            </div>
+        </footer>
+    </div>
 
     <script>
-        // Мобильное меню
         const menuBtn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-        menuBtn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
+        const closeBtn = document.getElementById('close-sidebar-btn');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        }
+
+        if (menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+        if (backdrop) backdrop.addEventListener('click', toggleSidebar);
     </script>
 </body>
 </html>

@@ -19,7 +19,6 @@ class Appointment(models.Model):
     def __str__(self):
         return f"Запись #{self.pk} - {self.patient.username}"
 
-
 class AppointmentHistory(models.Model):
     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name='history')
     old_status = models.CharField(max_length=20, blank=True, null=True)

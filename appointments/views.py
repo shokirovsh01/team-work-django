@@ -15,7 +15,6 @@ class MyAppointmentsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Appointment.objects.filter(patient=self.request.user).select_related('doctor', 'doctor__user').order_by('-appointment_date')
 
-
 class AppointmentBookView(LoginRequiredMixin, CreateView):
     model = Appointment
     template_name = 'media2/appointment_form.html'
@@ -34,18 +33,16 @@ class AppointmentBookView(LoginRequiredMixin, CreateView):
         existing_appointment = Appointment.objects.filter(doctor=doctor,appointment_date=appointment_date,status__in=['pending','confirmed']).exists()
 
         if existing_appointment:
-            form.add_error(appointment_date,'Doctor zanyat')
+            form.add_error('appointment_date', 'Врач уже занят на это время.')
             return self.form_invalid(form)
         form.instance.doctor = doctor
         form.instance.patient = self.request.user
         return super().form_valid(form)
 
-
 class AppointmentDetailView(LoginRequiredMixin, DetailView):
     model = Appointment
     template_name = 'media2/appointment_detail.html'
     context_object_name = 'appointment'
-
 
 class AppointmentCancelView(LoginRequiredMixin, View):
     def post(self, request, pk):
@@ -84,3 +81,42 @@ class AppointmentUpdateView(LoginRequiredMixin,UpdateView):
 
     def get_queryset(self):
         return Appointment.objects.filter(patient=self.request.user,status='pending')
+
+class DoctorAppointmentsView(LoginRequiredMixin, ListView):
+    model = Appointment
+    template_name = 'media2/doctor_appointments.html'
+    context_object_name = 'appointments'
+
+    def get_queryset(self):
+        try:
+            doctor = Doctor.objects.get(user=self.request.user)
+            return Appointment.objects.filter(doctor=doctor).order_by('-appointment_date')
+        except Doctor.DoesNotExist:
+            if self.request.user.is_staff or self.request.user.is_superuser:
+                return Appointment.objects.all().order_by('-appointment_date')
+            return Appointment.objects.none()
+
+class AppointmentConfirmView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        if request.user.is_staff or request.user.is_superuser:
+            appointment = get_object_or_404(Appointment, pk=pk)
+        else:
+            doctor = get_object_or_404(Doctor, user=request.user)
+            appointment = get_object_or_404(Appointment, pk=pk, doctor=doctor)
+        appointment.status = 'confirmed'
+        appointment.save()
+        return redirect('appointments:doctor_appointments')
+
+class AppointmentCompleteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        if request.user.is_staff or request.user.is_superuser:
+            appointment = get_object_or_404(Appointment, pk=pk)
+        else:
+            doctor = get_object_or_404(Doctor, user=request.user)
+            appointment = get_object_or_404(Appointment, pk=pk, doctor=doctor)
+        appointment.status = 'completed'
+        appointment.save()
+        return redirect('appointments:doctor_appointments')
+
+    
+    

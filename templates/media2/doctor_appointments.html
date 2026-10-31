@@ -5,7 +5,7 @@
 {% block content %}
 <div class="space-y-6">
 
-    <!-- Заголовок -->
+    
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
         <div>
             <h1 class="text-2xl font-bold text-white flex items-center gap-2.5">
@@ -19,7 +19,7 @@
         </a>
     </div>
 
-    <!-- Список записей к врачу -->
+    
     {% if appointments %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {% for app in appointments %}
@@ -44,7 +44,7 @@
                             </span>
                         </div>
 
-                        <!-- Пациент -->
+                        
                         <div>
                             <div class="text-xs text-slate-400">Пациент:</div>
                             <div class="font-bold text-white text-base mt-0.5">
@@ -53,7 +53,7 @@
                             <div class="text-xs text-slate-400">{{ app.patient.email }}</div>
                         </div>
 
-                        <!-- Врач (если смотрит админ) -->
+                        
                         {% if user.is_staff and not user.doctor_profile %}
                             <div class="text-xs text-teal-300">
                                 Врач: {{ app.doctor.user.get_full_name|default:app.doctor.user.username }}
@@ -66,7 +66,7 @@
                         </div>
                     </div>
 
-                    <!-- Кнопки управления статусом врача -->
+                    
                     <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
                         {% if app.status == 'pending' %}
                             <form action="{% url 'appointments:appointment_confirm' app.pk %}" method="post" class="m-0">

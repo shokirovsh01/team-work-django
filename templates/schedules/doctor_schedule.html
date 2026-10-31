@@ -5,7 +5,7 @@
 {% block content %}
 <div class="space-y-6 max-w-5xl mx-auto">
 
-    <!-- Шапка и навигация -->
+    
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg">
         <div>
             <a href="{% url 'doctor_detail' doctor.pk %}" class="inline-flex items-center text-xs font-medium text-slate-400 hover:text-white transition mb-2">
@@ -29,7 +29,7 @@
         {% endif %}
     </div>
 
-    <!-- 1. Регулярный рабочий график по дням недели -->
+    
     <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
         <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -75,7 +75,7 @@
             </div>
         {% endif %}
 
-        <!-- Форма добавления рабочего дня -->
+        
         {% if can_manage %}
             <div class="bg-slate-800/50 border border-slate-700/60 rounded-xl p-5 mt-4">
                 <h3 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
@@ -117,7 +117,7 @@
         {% endif %}
     </div>
 
-    <!-- 2. Временные слоты записи -->
+    
     <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>

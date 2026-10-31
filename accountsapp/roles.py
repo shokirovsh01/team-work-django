@@ -6,21 +6,17 @@ def in_group(user, group_name):
 def is_patient(user):
     return in_group(user, 'Patient')
 
-
 def is_doctor(user):
     return in_group(user, 'Doctor')
 
-
 def is_clinic_admin(user):
     return user.is_authenticated and (user.is_superuser or in_group(user, 'Admin'))
-
 
 class ClinicAdminRequiredMixin(UserPassesTestMixin):
     raise_exception = True
 
     def test_func(self):
         return is_clinic_admin(self.request.user)
-
 
 class StaffRequiredMixin(UserPassesTestMixin):
     raise_exception = True
