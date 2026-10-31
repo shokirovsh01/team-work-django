@@ -9,11 +9,8 @@ class Clinic(models.Model):
     email = models.EmailField('email', blank=True)
     working_hours = models.CharField('work_hour', max_length=200, blank=True)
 
-
-
     def __str__(self):
         return self.name
-
 
 class ClinicAnnouncement(models.Model):
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)

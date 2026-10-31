@@ -3,7 +3,6 @@ from django.dispatch import receiver
 from appointments.models import Appointment
 from .models import Notification
 
-
 @receiver(post_save, sender=Appointment)
 def appointment_notification(sender, instance, created, **kwargs):
     date_str = instance.appointment_date.strftime("%d.%m.%Y в %H:%M") if instance.appointment_date else "указанное время"
@@ -11,21 +10,18 @@ def appointment_notification(sender, instance, created, **kwargs):
     patient_name = instance.patient.get_full_name() or instance.patient.username
 
     if created:
-        # Уведомление врачу о новой записи
         if instance.doctor and instance.doctor.user:
             Notification.objects.create(
                 recipient=instance.doctor.user,
                 title="Новая запись на приём",
                 message=f"Пациент {patient_name} записался к вам на консультацию: {date_str}."
             )
-        # Уведомление пациенту
         Notification.objects.create(
             recipient=instance.patient,
             title="Запись на приём создана",
             message=f"Вы успешно записались к врачу {doc_name} на {date_str}. Статус: ожидает подтверждения врачом."
         )
     else:
-        # Уведомления при смене статуса
         if instance.status == 'confirmed':
             Notification.objects.create(
                 recipient=instance.patient,

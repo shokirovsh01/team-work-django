@@ -16,7 +16,6 @@ from django.contrib.auth import logout
 
 User = get_user_model()
 
-
 class RegisterViews(CreateView):
     form_class = PatientRegistrationForm
     template_name = 'media3/register.html'
@@ -43,7 +42,6 @@ class RegisterViews(CreateView):
             fail_silently=True,
         )
         return HttpResponseRedirect(self.get_success_url())
-
 
 def activate(request, uidb64, token):
     try:

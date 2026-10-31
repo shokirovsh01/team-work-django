@@ -9,8 +9,6 @@ from accountsapp.roles import ClinicAdminRequiredMixin, StaffRequiredMixin, is_c
 from .forms import ClinicForm, AnnouncementForm
 from .models import Clinic, ClinicAnnouncement
 
-
-
 class ClinicDetailView(DetailView):
     template_name = 'media3/clinic_detail.html'
 
@@ -22,8 +20,6 @@ class ClinicDetailView(DetailView):
         conten['announcements'] = ClinicAnnouncement.objects.filter(is_published=True)[:5]
         return conten
 
-
-
 class ClinicUpdateView(ClinicAdminRequiredMixin, UpdateView):
     form_class = ClinicForm
     template_name = 'media3/clinic_form.html'
@@ -32,14 +28,11 @@ class ClinicUpdateView(ClinicAdminRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return Clinic.objects.first()
 
-
     
 class PatientListView(StaffRequiredMixin, ListView):
     template_name = 'media3/patient_list.html'
     paginate_by = 20
     queryset = PatientProfile.objects.select_related('user').order_by('id')
-
-
 
 class AnnouncementCreateView(ClinicAdminRequiredMixin, CreateView):
     form_class = AnnouncementForm
@@ -50,7 +43,6 @@ class AnnouncementCreateView(ClinicAdminRequiredMixin, CreateView):
         form.instance.author = self.request.user
         form.instance.clinic = Clinic.objects.first()
         return super().form_valid(form)
-
 
 class AnnouncementUpdateView(ClinicAdminRequiredMixin, UpdateView):
     model = ClinicAnnouncement
@@ -74,4 +66,3 @@ class AnnouncementDeleteView(ClinicAdminRequiredMixin, View):
         get_object_or_404(ClinicAnnouncement, pk=pk).delete()
         messages.success(request, 'Deleted!!!')
         return redirect('announcement_list')
-

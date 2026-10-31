@@ -6,7 +6,6 @@ class ClinicForm(forms.ModelForm):
         model = Clinic
         fields = ['name', 'description', 'address', 'phone', 'email' , 'working_hours']
 
-
 class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = ClinicAnnouncement

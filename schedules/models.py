@@ -18,8 +18,6 @@ class WorkSchedule(models.Model):
     def __str__(self):
         return f"{self.doctor} — {self.get_weekday_display()}"
 
-
-
 class TimeSlot(models.Model):
     STATUS_FREE = 'free'
     STATUS_BOOKED = 'booked'
@@ -43,7 +41,4 @@ class DayOff(models.Model):
 
     def __str__(self):
         return f"{self.doctor} — выходной {self.date}"
-
-
-
 
