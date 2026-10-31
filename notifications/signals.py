@@ -3,7 +3,6 @@ from django.dispatch import receiver
 from appointments.models import Appointment
 from .models import Notification
 
-
 @receiver(post_save, sender=Appointment)
 def appointment_notification(sender, instance, created, **kwargs):
     date_str = instance.appointment_date.strftime("%d.%m.%Y в %H:%M") if instance.appointment_date else "указанное время"

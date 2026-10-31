@@ -15,7 +15,6 @@ class MyAppointmentsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Appointment.objects.filter(patient=self.request.user).select_related('doctor', 'doctor__user').order_by('-appointment_date')
 
-
 class AppointmentBookView(LoginRequiredMixin, CreateView):
     model = Appointment
     template_name = 'media2/appointment_form.html'
@@ -40,12 +39,10 @@ class AppointmentBookView(LoginRequiredMixin, CreateView):
         form.instance.patient = self.request.user
         return super().form_valid(form)
 
-
 class AppointmentDetailView(LoginRequiredMixin, DetailView):
     model = Appointment
     template_name = 'media2/appointment_detail.html'
     context_object_name = 'appointment'
-
 
 class AppointmentCancelView(LoginRequiredMixin, View):
     def post(self, request, pk):
@@ -85,7 +82,6 @@ class AppointmentUpdateView(LoginRequiredMixin,UpdateView):
     def get_queryset(self):
         return Appointment.objects.filter(patient=self.request.user,status='pending')
 
-
 class DoctorAppointmentsView(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = 'media2/doctor_appointments.html'
@@ -121,7 +117,6 @@ class AppointmentCompleteView(LoginRequiredMixin, View):
         appointment.status = 'completed'
         appointment.save()
         return redirect('appointments:doctor_appointments')
-
 
     
     

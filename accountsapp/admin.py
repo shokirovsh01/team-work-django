@@ -3,6 +3,3 @@ from .models import PatientProfile
 
 admin.site.register(PatientProfile)
 
-
-
-

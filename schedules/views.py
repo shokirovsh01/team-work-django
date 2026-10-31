@@ -104,7 +104,6 @@ def days_off(request, doctor_id):
         'error': error,
     })
 
-
 def slot_create(request, doctor_id):
     doctor = get_object_or_404(Doctor, pk=doctor_id)
     if not _check_doctor_permission(request, doctor):
@@ -159,7 +158,6 @@ def slot_delete(request, pk):
 
     doctor_id = slot.doctor.id
     if request.method == 'POST':
-        # Условие интеграции по ТЗ: нельзя удалять слот, если он занят (booked)
         if slot.status == 'free':
             slot.delete()
         else:

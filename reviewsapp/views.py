@@ -13,16 +13,11 @@ from django.db.models import Count, Avg, Q
 from django.views.generic import TemplateView
 from doctors.models import Doctor
 
-
-
 class ClinicAdminRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or not request.user.is_staff:
             return redirect('login')
         return super().dispatch(request, *args, **kwargs)
-
-
-
 
 class ReviewCreateView(LoginRequiredMixin, CreateView):
     form_class = ReviewForm
@@ -55,8 +50,6 @@ class ReviewCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'Thank you for review!')
         return super().form_valid(form)
 
-
-
 class ReviewUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ReviewForm
     template_name = 'media3/review_form.html'
@@ -78,7 +71,6 @@ class ReviewUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, 'Updated')
         return super().form_valid(form)
 
-
 class ReviewDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         review = get_object_or_404(DoctorReview, pk=pk, patient=request.user)
@@ -88,8 +80,6 @@ class ReviewDeleteView(LoginRequiredMixin, View):
         if doctor_id:
             return redirect(f'/doctors/{doctor_id}/')
         return redirect('doctor_list')
-
-
 
 class StatsView(ClinicAdminRequiredMixin, TemplateView):
     template_name = 'media3/stats.html'
